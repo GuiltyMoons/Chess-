@@ -1,5 +1,4 @@
 let cell = document.getElementById("cell");
-let cutOutCell = document.getElementById("cutouts");
 let newBoard = [];
 let cutOuts = [ { row: 0, col: 0, size: 3 }, { row: 0, col: 11, size: 3 },
      { row: 11, col: 0, size: 3 }, { row: 11, col: 11, size: 3 }];

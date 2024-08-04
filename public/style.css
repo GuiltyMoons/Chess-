@@ -1,0 +1,29 @@
+#cell {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    grid-template-rows: repeat(14, 1fr);
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#cell > div {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.white-cell {
+    background-color: lightgoldenrodyellow;
+    border: 1px solid black;
+}
+
+.black-cell {
+    background-color: green;
+    border: 1px solid black;
+}
+
+.cutout {
+    background-color: white;
+}
