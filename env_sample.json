@@ -1,7 +1,7 @@
 {
     "user": "your-username",
-    "host": "your-hostname",
-    "database": "your-database-name",
+    "host": "localhost",
+    "database": "logindb",
     "password": "your-password",
     "port": 5432
 }
