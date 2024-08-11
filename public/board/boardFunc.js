@@ -84,27 +84,15 @@ function boardSetup(board) {
         element.forEach(({piece, color, position}) => {
             position.forEach(pos => {
                 board[pos.row][pos.col] = pieces[piece](pos, color);
+				board[pos.row][pos.col].render();
             });
         });
     });
 };
 
-function updateBoard(board){ 
-    for (let r = 0; r < board.length; r ++) {
-        for (let c = 0; c < board[r].length; c ++) {
-            if (board[r][c] === 0 || board[r][c] === 1) {
-                continue
-            } else {
-                board[r][c].render();
-            };
-        };
-    };
-};
-
 const boardFunc = {
     createInitialArray,
-    boardSetup, 
-    updateBoard
+    boardSetup
 };
 
 export default boardFunc;

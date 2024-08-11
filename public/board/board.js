@@ -1,5 +1,4 @@
 import isCutOut from "./cutout.js";
-import boardFunc from "./boardFunc.js";
 
 let cell = document.getElementById("cell");
 
@@ -20,7 +19,3 @@ for (let r = 0; r < 14; r++) {
 		cell.append(div);
 	}
 };
-
-let boardArray = boardFunc.createInitialArray();
-boardFunc.boardSetup(boardArray);
-boardFunc.updateBoard(boardArray);

@@ -1,4 +1,5 @@
-function Piece(starting) {
+function Piece(starting, player) {
+	let p = player;
 	let currentPosition = starting;
 	let previousPosition;
 	let dom = document.createElement("div");
@@ -8,9 +9,9 @@ function Piece(starting) {
 	}
 
 	function setPosition(newPosition, boardState){
-		previousPosition = currentPosition;;
+		previousPosition = currentPosition;
 		currentPosition = newPosition;
-		boardState[currentPosition.row][currentPosition.col] = boardState[previousPosition.row][previousPosition.col];
+		boardState[currentPosition.row][currentPosition.col] = this;
 		boardState[previousPosition.row][previousPosition.col] = 1;
 
 		unrender(previousPosition);
@@ -33,6 +34,7 @@ function Piece(starting) {
 
 	return {
 		dom,
+		getPlayer: () => p,
 		getPosition,
 		setPosition,
 		unrender,
