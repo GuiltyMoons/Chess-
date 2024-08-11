@@ -10,6 +10,12 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 
         npm install
 
+4. Install postgres if you don't already have it, then run the following command to set up an empty database:
+
+        npm run setup
+
+**Note: You have to rename `env_sample.json` to `env.json` and replace the user and password fields with your own credentials.**
+
 
 ## Getting Started
 
