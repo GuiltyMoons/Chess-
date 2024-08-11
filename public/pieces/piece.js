@@ -11,7 +11,7 @@ function Piece(starting) {
 		previousPosition = currentPosition;;
 		currentPosition = newPosition;
 		boardState[currentPosition.row][currentPosition.col] = boardState[previousPosition.row][previousPosition.col];
-		boardState[currentPosition.row][currentPosition.col] = 1;
+		boardState[previousPosition.row][previousPosition.col] = 1;
 
 		unrender(previousPosition);
 		render();
