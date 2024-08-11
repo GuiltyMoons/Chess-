@@ -1,12 +1,4 @@
-import Knight from '../pieces/knight.js'
-
-let cutOuts = [ { row: 0, col: 0, size: 3 }, { row: 0, col: 11, size: 3 },
-	{ row: 11, col: 0, size: 3 }, { row: 11, col: 11, size: 3 }];
-
-const isCutOut = (r, c) => cutOuts.some(({ row, col, size }) =>
-	r >= row && r < row + size &&
-	c >= col && c < col + size
-);
+import isCutOut from "./cutout.js";
 
 let cell = document.getElementById("cell");
 
