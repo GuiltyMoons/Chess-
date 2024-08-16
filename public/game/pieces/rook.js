@@ -1,13 +1,13 @@
 import Piece from './piece.js'
 
 const imgSources = {
-    blue: '../imgs/blue/bBishop.png',
-    green: '../imgs/green/gBishop.png',
-    red: '../imgs/red/rBishop.png',
-    yellow: '../imgs/yellow/yBishop.png'
+    blue: '/game/imgs/blue/bRook.png',
+    green: '/game/imgs/green/gRook.png',
+    red: '/game/imgs/red/rRook.png',
+    yellow: '/game/imgs/yellow/yRook.png'
 };
 
-function Bishop(starting, player){
+function Rook(starting, player){
     const piece = Piece(starting);
     const imgSource = imgSources[player];
     const dom = piece.dom;
@@ -19,4 +19,4 @@ function Bishop(starting, player){
     }
 }
 
-export default Bishop;
+export default Rook;

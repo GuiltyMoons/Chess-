@@ -1,10 +1,10 @@
 import Piece from './piece.js'
 
 const imgSources = {
-    blue: '../imgs/blue/bPawn.png',
-    green: '../imgs/green/gPawn.png',
-    red: '../imgs/red/rPawn.png',
-    yellow: '../imgs/yellow/yPawn.png'
+    blue: '/game/imgs/blue/bPawn.png',
+    green: '/game/imgs/green/gPawn.png',
+    red: '/game/imgs/red/rPawn.png',
+    yellow: '/game/imgs/yellow/yPawn.png'
 };
 
 function Pawn(starting, player){

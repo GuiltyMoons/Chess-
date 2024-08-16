@@ -1,4 +1,4 @@
-import boardFunc from "./board/boardFunc.js";
+import boardFunc from "./game/board/boardFunc.js";
 
 let initialBoard = boardFunc.createInitialArray();
 boardFunc.boardSetup(initialBoard);
@@ -6,12 +6,10 @@ boardFunc.boardSetup(initialBoard);
 let playerTurn = ["blue", "green", "red", "yellow"]
 let highlightedDiv = []
 let pieceClicked;
-console.log(initialBoard)
 
 function highlight(moves){
     moves.forEach(({ row, col }) => {
         const id = `${row}-${col}`;
-        console.log(id)
         const element = document.getElementById(id);
         if (element) {
             element.classList.add("highlight");

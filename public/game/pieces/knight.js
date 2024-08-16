@@ -1,10 +1,10 @@
 import Piece from './piece.js'
 
 const imgSources = {
-	blue: '../imgs/blue/bKnight.png',
-	green: '../imgs/green/gKnight.png',
-	red: '../imgs/red/rKnight.png',
-	yellow: '../imgs/yellow/yKnight.png'
+	blue: '/game/imgs/blue/bKnight.png',
+	green: '/game/imgs/green/gKnight.png',
+	red: '/game/imgs/red/rKnight.png',
+	yellow: '/game/imgs/yellow/yKnight.png'
 };
 
 function Knight(starting, player){
