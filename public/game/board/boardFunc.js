@@ -6,7 +6,6 @@ import Queen from "../pieces/queen.js";
 import King from "../pieces/king.js";
 import Pawn from "../pieces/pawn.js";
 
-
 function createInitialArray() {
     const size = 14;
     let board = [];
