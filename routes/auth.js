@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pg = require("pg");
+const bcrypt = require("bcrypt");
 const Pool = pg.Pool;
 const pool = new Pool(require("../env.json"));
 
@@ -10,9 +11,10 @@ router.get("/signup", (req, res) => {
 
 router.post("/signup", async (req, res) => {
     const { username, email, password } = req.body;
-    // TODO: Hashing with bcrypt
-    let hashedPassword = password;
+
     try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         await pool.query("INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)", [username, email, hashedPassword]);
         res.sendStatus(201);
     } catch (error) {
