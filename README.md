@@ -24,3 +24,11 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
         npm run start
 
 2. Once the application is running, open your browser and go to: http://localhost:3000/
+
+## Routes
+
+Signup page: http://localhost:3000/auth/signup
+
+Login page: http://localhost:3000/auth/login
+
+Game page: http://localhost:3000/game/play
