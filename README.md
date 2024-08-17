@@ -14,7 +14,7 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 
         npm run setup
 
-**Note: You have to rename `env_sample.json` to `env.json` and replace the user and password fields with your own credentials.**
+**Note: You have to rename `env_sample.json` to `env.json` and replace the user and password fields with your own postgres credentials.**
 
 
 ## Getting Started
