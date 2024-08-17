@@ -1,4 +1,4 @@
-import boardFunc from "./game/board/boardFunc.js";
+import boardFunc from "./board/boardFunc.js";
 
 let initialBoard = boardFunc.createInitialArray();
 boardFunc.boardSetup(initialBoard);
