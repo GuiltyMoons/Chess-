@@ -7,11 +7,16 @@ button.addEventListener("click", async (event) => {
         password: document.getElementById("password-input").value,
     }
 
+    let message = document.getElementById("message");
+
     try {
-        await axios.post("/login", body);
-        //TODO: after the login is successful, redirect the user to the game page
+        //TODO: currently redirects you to game page after login, but should actually make cookies and direct you to main site
+        await axios.post("login", body);
+        window.location.href = "/"; // redirect to game page
 
     } catch (error) {
-
+        message.textContent = error.response.data.message;
+        message.classList.add('error');
+        message.classList.remove('success');
     }
 });
