@@ -1,13 +1,25 @@
+
+
 const message = document.getElementById("message");
 const button = document.getElementById("submit");
 
 button.addEventListener("click", async (event) => {
     event.preventDefault();
 
+    const password = document.getElementById("password-input").value;
+    const confirmPassword = document.getElementById("confirm-password-input").value;
+
+    if (password !== confirmPassword) {
+        message.textContent = "Passwords do not match.";
+        message.classList.add('error');
+        message.classList.remove('success');
+        return;
+    }
+
     const body = {
         username: document.getElementById("username-input").value, //TODO: database breaks if you put in a chinese character...
         email: document.getElementById("email-input").value,
-        password: document.getElementById("password-input").value,
+        password: password,
     }
 
     try {
