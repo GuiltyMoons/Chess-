@@ -11,7 +11,7 @@ button.addEventListener("click", async (event) => {
     let message = document.getElementById("message");
 
     try {
-        await axios.post("/signup", body);
+        await axios.post("signup", body);
 
         message.textContent = "User created successfully";
         message.classList.add('success');

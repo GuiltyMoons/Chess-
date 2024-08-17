@@ -7,11 +7,15 @@ button.addEventListener("click", async (event) => {
         password: document.getElementById("password-input").value,
     }
 
+    let message = document.getElementById("message");
+
     try {
-        await axios.post("/login", body);
-        //TODO: after the login is successful, redirect the user to the game page
+        await axios.post("login", body);
+        window.location.href = "/";// redirect to game page
 
     } catch (error) {
-
+        message.textContent = "An error occurred";
+        message.classList.add('error');
+        message.classList.remove('success');
     }
 });
