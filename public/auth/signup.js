@@ -1,23 +1,23 @@
-let button = document.getElementById("submit");
+const message = document.getElementById("message");
+const button = document.getElementById("submit");
+
 button.addEventListener("click", async (event) => {
     event.preventDefault();
 
-    let body = {
-        username: document.getElementById("username-input").value,
+    const body = {
+        username: document.getElementById("username-input").value, //TODO: database breaks if you put in a chinese character...
         email: document.getElementById("email-input").value,
-        password: document.getElementById("password-input").value, //TODO: hashing might have to occur before the body is sent to the server...?
+        password: document.getElementById("password-input").value,
     }
 
-    let message = document.getElementById("message");
-
     try {
-        await axios.post("signup", body);
+        const response = await axios.post("signup", body);
 
-        message.textContent = "User created successfully";
+        message.textContent = response.data.message;
         message.classList.add('success');
         message.classList.remove('error');
     } catch (error) {
-        message.textContent = "An error occurred";
+        message.textContent = error.response.data.message;
         message.classList.add('error');
         message.classList.remove('success');
     }
