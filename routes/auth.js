@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const path = require("path");
 const pg = require("pg");
 const Pool = pg.Pool;
 const pool = new Pool(require("../env.json"));
 
 router.get("/signup", (req, res) => {
-    res.sendFile("public/auth/signup.html", { root: __dirname });
+    res.sendFile("public/auth/signup.html", { root: process.cwd() });
 });
 
 router.post("/signup", async (req, res) => {
@@ -22,7 +21,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router.get("/login", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/auth/login.html"));
+    res.sendFile("public/auth/login.html", { root: process.cwd() });
 });
 
 router.post("/login", (req, res) => {
