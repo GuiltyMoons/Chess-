@@ -1,4 +1,6 @@
 import Piece from './piece.js'
+import { getFiniteMoves } from '../movement/movement.js';
+import { knightDirections } from '../movement/direction.js';
 
 const imgSources = {
 	blue: '/game/imgs/blue/bKnight.png',
@@ -17,27 +19,7 @@ function Knight(starting, player){
 	dom.append(imageElement);
 
 	function getPossibleMoves(boardState){
-		let position = piece.getPosition();
-		let moves = [];
-
-		const directions = [
-			{ row: 2, col: 1 }, { row: 2, col: -1 },
-			{ row: -2, col: 1 }, { row: -2, col: -1 },
-			{ row: 1, col: 2 }, { row: 1, col: -2 },
-			{ row: -1, col: 2 }, { row: -1, col: -2 },
-		];
-
-		for (const direction of directions){
-			const newRow = position.row + direction.row;
-			const newCol = position.col + direction.col;
-
-			if (newRow >= 0 && newRow < boardState.length &&
-				newCol >= 0 && newCol < boardState[0].length &&
-				boardState[newRow][newCol] !== 0 && boardState[newRow][newCol]){
-				moves.push({ row: newRow, col: newCol });
-			}
-		}
-		return moves;
+		return getFiniteMoves(boardState, knightDirections, piece.getPosition(), piece.getPlayer());
 	}
 	return {
 		...piece,
