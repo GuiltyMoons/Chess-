@@ -14,7 +14,7 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 
         npm run setup:dev
 
-**Note: You have to rename `env_sample.json` to `.env` and replace the fields with your own credentials.**
+**Note: You have to rename `env.sample` to `.env` and replace the fields with your own credentials.**
 
 5. Start the server:
 
@@ -34,3 +34,5 @@ Local Routes:
 http://localhost:3000/auth/signup
 http://localhost:3000/auth/login
 http://localhost:3000/game/play
+
+**Note: Undefined routes will default to the signup page.**
