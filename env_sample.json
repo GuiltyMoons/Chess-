@@ -1,7 +1,0 @@
-{
-    "user": "your-username",
-    "host": "localhost",
-    "database": "login_db",
-    "password": "your-password",
-    "port": 5432
-}

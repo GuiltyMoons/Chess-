@@ -1,9 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const pg = require("pg");
 const bcrypt = require("bcrypt");
-const Pool = pg.Pool;
-const pool = new Pool(require("../env.json"));
+const { Pool } = require("pg");
+
+if (process.env.NODE_ENV == "production") {
+	databaseConfig = { connectionString: process.env.DATABASE_URL };
+} else {
+	let { PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT } = process.env;
+	databaseConfig = { PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT };
+}
+
+let pool = new Pool(databaseConfig);
 
 //TODO: Ask about rate limiting the pages. How much do we care about security?
 
