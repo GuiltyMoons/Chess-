@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS login_db;
-CREATE DATABASE login_db;
-\c login_db
+DROP DATABASE IF EXISTS chesspp;
+CREATE DATABASE chesspp;
+\c chesspp
 
 CREATE TABLE users (
 	id SERIAL PRIMARY KEY,                -- Unique identifier for each user

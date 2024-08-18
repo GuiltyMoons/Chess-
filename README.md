@@ -12,23 +12,25 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 
 4. Install postgres if you don't already have it, then run the following command to set up an empty database:
 
-        npm run setup
+        npm run setup:dev
 
-**Note: You have to rename `env_sample.json` to `env.json` and replace the user and password fields with your own postgres credentials.**
+**Note: You have to rename `env_sample.json` to `.env` and replace the fields with your own credentials.**
 
+5. Start the server:
 
-## Getting Started
+	npm run start:dev
 
-1. To start the application, run the following command:
+6. See [Routes](#Routes) to see the available links.
 
-        npm run start
-
-2. Once the application is running, open your browser and go to: http://localhost:3000/
 
 ## Routes
 
-Signup page: http://localhost:3000/auth/signup
+Deployed Routes:
+https://chesspp.fly.dev/auth/signup
+https://chesspp.fly.dev/auth/login
+https://chesspp.fly.dev/game/play
 
-Login page: http://localhost:3000/auth/login
-
-Game page: http://localhost:3000/game/play
+Local Routes:
+http://localhost:3000/auth/signup
+http://localhost:3000/auth/login
+http://localhost:3000/game/play
