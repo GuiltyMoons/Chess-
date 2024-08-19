@@ -11,6 +11,9 @@ function Piece(starting, player) {
 	function setPosition(newPosition, boardState){
 		previousPosition = currentPosition;
 		currentPosition = newPosition;
+		if(typeof boardState[currentPosition.row][currentPosition.col] === "object"){
+			unrender(currentPosition);
+		}
 		boardState[currentPosition.row][currentPosition.col] = this;
 		boardState[previousPosition.row][previousPosition.col] = 1;
 
@@ -41,5 +44,5 @@ function Piece(starting, player) {
 		render
 	}
 }
-export default Piece;
 
+export default  Piece;
