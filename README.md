@@ -2,7 +2,7 @@
 
 Our project aims to create a 4-player game of chess with fog of war, with unexpected twists and extra features.
 
-## Instructions
+## Getting Started Instructions
 
 1. Clone or download the project repository.
 2. Navigate to the project directory.
@@ -10,7 +10,7 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 
         npm install
 
-4. Install postgres if you don't already have it, then run the following command to set up an empty database:
+4. Install postgres if you don't already have it, then run the following command to delete the existing database and set up an empty one:
 
         npm run setup:dev
 
@@ -23,16 +23,22 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 6. See [Routes](#Routes) to see the available links.
 
 
+## Deployment Instructions
+
+1. Run the following command:
+
+        fly deploy
+
 ## Routes
 
 Deployed Routes:
 https://chesspp.fly.dev/auth/signup
 https://chesspp.fly.dev/auth/login
-https://chesspp.fly.dev/game/play
+https://chesspp.fly.dev/game/menu
 
 Local Routes:
 http://localhost:3000/auth/signup
 http://localhost:3000/auth/login
-http://localhost:3000/game/play
+http://localhost:3000/game/menu
 
 **Note: Undefined routes will default to the signup page.**
