@@ -23,10 +23,37 @@ router.post("/create", (req, res) => {
 router.get("/:roomId", (req, res) => {
     let { roomId } = req.params;
     if (!rooms.hasOwnProperty(roomId)) {
-        return res.status(404).send();
+        return res.status(404).send(); //TODO: should not crash
     }
     rooms[roomId] = [];
     res.sendFile("public/game/chess.html", { root: process.cwd() });
 });
 
-module.exports = router;
+function initSocket(io) {
+    io.on("connection", (socket) => {
+        let url = socket.handshake.headers.referer;
+        let pathParts = url.split("/");
+        let roomId = pathParts[pathParts.length - 1];
+
+        if (!rooms.hasOwnProperty(roomId)) {
+            return;
+        }
+
+        rooms[roomId][socket.id] = socket;
+
+        socket.on("disconnect", () => {
+            delete rooms[roomId][socket.id];
+        });
+
+        socket.on("gameUpdate", ({ from, to }) => {
+            for (let otherSocket of Object.values(rooms[roomId])) {
+                if (otherSocket.id === socket.id){
+                    continue;
+                }
+                otherSocket.emit("gameUpdate", { from, to });
+            }
+        });
+    });
+}
+
+module.exports = {router, initSocket};

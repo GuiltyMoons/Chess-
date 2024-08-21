@@ -18,8 +18,6 @@ const io = new Server(server);
 app.use(express.json());
 app.use(express.static("public"));
 
-
-
 // fly.io sets NODE_ENV to production automatically, otherwise it's unset when running locally
 let databaseConfig;
 if (process.env.NODE_ENV == "production") {
@@ -37,41 +35,11 @@ pool.connect().then(() => {
 });
 
 const authRoutes = require("./routes/auth");
-const gameRoutes = require("./routes/game");
+const { router: gameRoutes, initSocket} = require("./routes/game");
 
 app.use("/auth", authRoutes);
 app.use("/game", gameRoutes);
-
-// sockets from jason
-
-let rooms = {};
-
-io.on("connection", (socket) => {
-    let url = socket.handshake.headers.referer;
-    let pathParts = url.split("/");
-    let roomId = pathParts[pathParts.length - 1];
-
-    if (!rooms.hasOwnProperty(roomId)) {
-        return;
-    }
-
-    rooms[roomId][socket.id] = socket;
-
-    socket.on("disconnect", () => {
-        delete rooms[roomId][socket.id];
-    });
-
-    socket.on("gameUpdate", ({ from, to }) => {
-        for (let otherSocket of Object.values(rooms[roomId])) {
-            if (otherSocket.id === socket.id){
-                continue;
-            }
-            otherSocket.emit("gameUpdate", { from, to });
-        }
-    });
-});
-
-//
+initSocket(io);
 
 //TODO: This is basically a try-catch block. If a user tries to access a page taht doesnt exist, they just default go to the signup page.
 app.get("*", (req, res) => {
