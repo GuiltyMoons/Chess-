@@ -44,9 +44,11 @@ initSocket(io);
 //TODO: This is basically a try-catch block. If a user tries to access a page taht doesnt exist, they just default go to the signup page.
 app.get("*", (req, res) => {
     // res.redirect("/auth/signup");
-	res.redirect("/game/menu.html"); //TODO: add signup and login button to this redirect
+	res.redirect("/game/menu"); //TODO: add signup and login button to this redirect
 });
 
 server.listen(port, host, () => {
     console.log(`Listening at: http://${host}:${port}`);
 });
+
+//TODO: add returns to responses

@@ -14,6 +14,10 @@ function generateRoomCode() {
 
 let rooms = {}; //TODO: move
 
+router.get("/menu", (req, res) => {
+    res.sendFile("public/game/menu.html", { root: process.cwd() });
+});
+
 router.post("/create", (req, res) => {
     let roomId = generateRoomCode();
     rooms[roomId] = {};
