@@ -10,7 +10,7 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 
         npm install
 
-4. Install postgres if you don't already have it, then run the following command to set up an empty database:
+4. Install postgres if you don't already have it, then run the following command to delete the existing database and set up an empty one:
 
         npm run setup:dev
 

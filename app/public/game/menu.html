@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chess++</title>
+</head>
+<body>
+    <button id = "match"><strong>Find a match</strong></button>
+    <button><strong>How to Play</strong></button>
+    <script>
+        let button = document.getElementById("match");
+
+        button.addEventListener("click", async() => {
+            let response = await fetch("/create", { method: "POST" })
+            let { roomId } = await response.json();
+            window.location = `/game/${roomId}`;
+        });
+    </script>
+</body>
+</html>

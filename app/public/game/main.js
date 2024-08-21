@@ -3,6 +3,8 @@ import boardFunc from "./board/boardFunc.js";
 let initialBoard = boardFunc.createInitialArray();
 boardFunc.boardSetup(initialBoard);
 
+const socket = io();
+
 let playerTurn = ["blue", "green", "red", "yellow"]
 let highlightedDiv = []
 let pieceClicked;
@@ -53,9 +55,26 @@ cell.addEventListener("click", (event) => {
     }
 
     if(tile.classList.contains("highlight") && pieceClicked){
-        pieceClicked.setPosition(positionDict, initialBoard)
+        const previousPosition = pieceClicked.getPosition();
+        const currentPosition = positionDict;
+        pieceClicked.setPosition(currentPosition, initialBoard)
         unHighlight();
         playerTurn.push(playerTurn.shift());
+
+        socket.emit("gameUpdate", {
+            from: {
+                row: previousPosition.row,
+                col: previousPosition.col
+            },
+            to: currentPosition
+        });
         pieceClicked = null;
     }
-})
+});
+
+socket.on("gameUpdate", ({ from, to }) => {
+    const piece = initialBoard[from.row][from.col];
+    if (piece) {
+        piece.setPosition(to, initialBoard)
+    }
+});
