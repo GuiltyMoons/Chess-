@@ -10,7 +10,8 @@
         let button = document.getElementById("match");
 
         button.addEventListener("click", async() => {
-            let response = await fetch("/create", { method: "POST" })
+            console.log("clicked");
+            let response = await fetch("create", { method: "POST" }) //TODO: change to axios
             let { roomId } = await response.json();
             window.location = `/game/${roomId}`;
         });
