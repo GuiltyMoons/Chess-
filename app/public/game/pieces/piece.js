@@ -24,12 +24,14 @@ function Piece(starting, player) {
 	const render = () => {
 		const id = `${currentPosition.row}-${currentPosition.col}`;
 		const parent = document.getElementById(id);
+        parent.classList.add('fog');
 		parent.append(dom);
 	}
 
 	const unrender = (position) =>{
 		const id = `${position.row}-${position.col}`;
 		const parent = document.getElementById(id);
+        parent.classList.remove('fog');
 		while (parent.firstChild){
 			parent.removeChild(parent.lastChild);
 		}
