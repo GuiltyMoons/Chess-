@@ -12,8 +12,6 @@ if (process.env.NODE_ENV == "production") {
 
 let pool = new Pool(databaseConfig);
 
-//TODO: Ask about rate limiting the pages. How much do we care about security?
-
 router.get("/signup", (req, res) => {
     res.sendFile("public/auth/signup.html", { root: process.cwd() });
 });

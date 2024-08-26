@@ -33,7 +33,32 @@ img {
 .cutout {
     background-color: white;
 }
-
+/* TODO: implement server-sided fog of war. */
+/* TODO: If we have time, change the highlight color based on the player's turn. also i'm such a CSS god -Nico */
 .highlight {
-    background-color: black;
+    background-color: rgba(144, 238, 144, 0.7);
+    border: 2px solid rgba(60, 179, 113, 1);
+    box-shadow: 0 0 10px rgba(60, 179, 113, 0.8), 0 0 20px rgba(144, 238, 144, 0.6);
+    border-radius: 8px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.fog {
+    position: relative;
+}
+
+.fog::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #333;
+    opacity: 0.8;
+    z-index: 1;
+}
+
+.fog img {
+    visibility: hidden;
 }
