@@ -5,8 +5,11 @@ boardFunc.boardSetup(initialBoard);
 
 const socket = io();
 
-let playerTurn = ["blue", "green", "red", "yellow"];
-let highlightedDiv = [];
+let playerColor;
+let currentPlayer;
+let playerTurn = [];
+let playersJoined = {};
+let highlightedDiv = []
 let pieceClicked;
 
 function highlight(moves) {
@@ -29,9 +32,7 @@ function unHighlight() {
     updateVisibilityForCurrentPlayer();
 }
 
-function updateVisibilityForCurrentPlayer() {
-    const currentPlayer = playerTurn[0];
-
+function updateVisibilityForCurrentPlayer() { //TODO: fix fog bug where captured piece is not fogged correctly for other players
     for (let row = 0; row < initialBoard.length; row++) {
         for (let col = 0; col < initialBoard[row].length; col++) {
             const tile = document.getElementById(`${row}-${col}`);
@@ -44,7 +45,7 @@ function updateVisibilityForCurrentPlayer() {
     for (let row = 0; row < initialBoard.length; row++) {
         for (let col = 0; col < initialBoard[row].length; col++) {
             const piece = initialBoard[row][col];
-            if (typeof piece === "object" && piece.getPlayer() === currentPlayer) {
+            if (typeof piece === "object" && piece.getPlayer() === playerColor) {
                 // Get the positions around the piece within a 1-tile radius
                 for (let r = Math.max(0, row - 1); r <= Math.min(initialBoard.length - 1, row + 1); r++) {
                     for (let c = Math.max(0, col - 1); c <= Math.min(initialBoard[r].length - 1, col + 1); c++) {
@@ -73,26 +74,45 @@ cell.addEventListener("click", (event) => {
     const positionDict = { row, col };
 
     if (typeof initialBoard[row][col] === "object") {
-        if (initialBoard[row][col].getPlayer() === playerTurn[0]) {
-            let piece = initialBoard[row][col];
-            if (piece !== pieceClicked) {
+        let piece = initialBoard[row][col];
+        if (piece.getPlayer() !== playerColor) {
+            if (tile.classList.contains("highlight")) {
+                const previousPosition = pieceClicked.getPosition();
+                pieceClicked.setPosition(positionDict, initialBoard);
                 unHighlight();
-                let moves = piece.getPossibleMoves(initialBoard);
-                highlight(moves);
-                pieceClicked = piece;
-            } else {
-                return;
-            }
-        }
-    }
+                updateVisibilityForCurrentPlayer();
+                playerTurn.push(playerTurn.shift());
 
-    if (tile.classList.contains("highlight") && pieceClicked) {
+                socket.emit("gameUpdate", {
+                    from: {
+                        row: previousPosition.row,
+                        col: previousPosition.col
+                    },
+                    to: positionDict
+                });
+                pieceClicked = null;
+            } else {
+                alert("It's not your piece."); //can be changed to put into a msg div instead
+            }
+            return;
+        }
+        if (socket.id !== currentPlayer) {
+            alert("It's not your turn."); //can be changed to put into a msg div instead
+            return;
+        }
+        if (piece !== pieceClicked) {
+            unHighlight();
+            let moves = piece.getPossibleMoves(initialBoard);
+            highlight(moves);
+            pieceClicked = piece;
+        }
+    } else if (tile.classList.contains("highlight") && pieceClicked) {
         const previousPosition = pieceClicked.getPosition();
         const currentPosition = positionDict;
         pieceClicked.setPosition(currentPosition, initialBoard);
         unHighlight();
-        playerTurn.push(playerTurn.shift());
         updateVisibilityForCurrentPlayer();
+        playerTurn.push(playerTurn.shift());
 
         socket.emit("gameUpdate", {
             from: {
@@ -105,6 +125,21 @@ cell.addEventListener("click", (event) => {
     }
 });
 
+socket.on("assignColor", ({ color }) => {
+    playerColor = color;
+    console.log(`Your color is ${playerColor}`); //can be changed to put into a msg div instead
+});
+
+socket.on("playerJoined", ({ id, color }) => {
+    playersJoined[id] = color;
+    console.log(`${color} player joined`);//can be changed to put into a msg div instead
+    updateVisibilityForCurrentPlayer();
+});
+
+socket.on("roomFull", () => {
+    alert("Room Full");
+});
+
 socket.on("gameUpdate", ({ from, to }) => {
     const piece = initialBoard[from.row][from.col];
     if (piece) {
@@ -112,5 +147,11 @@ socket.on("gameUpdate", ({ from, to }) => {
     }
 });
 
-// Initial visibility setup when the board is first set up
-updateVisibilityForCurrentPlayer();
+socket.on("playerTurn", ({ playerId, turnOrder }) => {
+    console.log("your turn", playerId); //can be changed to put into a msg div instead
+    playerTurn = turnOrder;
+    currentPlayer = playerId;
+    if (socket.id === playerId) {
+        updateVisibilityForCurrentPlayer();
+    }
+});

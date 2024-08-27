@@ -20,7 +20,7 @@ router.get("/menu", (req, res) => {
 
 router.post("/create", (req, res) => {
     let roomId = generateRoomCode();
-    rooms[roomId] = {};
+    rooms[roomId] = {players:{}, turnOrder: [], turn: 0};
     return res.json({roomId});
 });
 
@@ -29,7 +29,6 @@ router.get("/:roomId", (req, res) => {
     if (!rooms.hasOwnProperty(roomId)) {
         return res.status(404).send(); //TODO: should not crash
     }
-    rooms[roomId] = [];
     res.sendFile("public/game/chess.html", { root: process.cwd() });
 });
 
@@ -43,18 +42,63 @@ function initSocket(io) {
             return;
         }
 
-        rooms[roomId][socket.id] = socket;
+        let room = rooms[roomId];
+
+        const colors = ["blue", "green", "red", "yellow"];
+        if (Object.keys(room.players).length < colors.length) {
+            let playerColor = colors[Object.keys(room.players).length];
+            room.players[socket.id] = { color: playerColor, socket: socket };
+            room.turnOrder.push(socket.id);
+            socket.emit("assignColor", { color: playerColor });
+
+            for (let playerSocket of Object.values(room.players)) {
+                if (playerSocket && playerSocket.socket) {
+                    playerSocket.socket.emit("playerJoined", { id: socket.id, color: playerColor})
+                }
+            }
+
+            if (room.turnOrder.length === 1) {
+                room.turn = 0;
+                for (let otherSocketId of room.turnOrder) {
+                    let otherSocket = room.players[otherSocketId];
+                    if (otherSocket && otherSocket.socket) {
+                        otherSocket.socket.emit("playerTurn", { playerId: room.turnOrder[room.turn], turnOrder: room.turnOrder });
+                    }
+                }
+            }
+        } else {
+            socket.emit("roomFull");
+            socket.disconnect(); //This can be changed to redirect to menu or spec later
+            return;
+        }
 
         socket.on("disconnect", () => {
-            delete rooms[roomId][socket.id];
+            delete room.players[socket.id];
+            room.turnOrder = room.turnOrder.filter(id => id !== socket.id);
+
+            for (let player of Object.values(room.players)) {
+                if (player && player.socket) {
+                    player.socket.emit("playerLeft", socket.id);
+                }
+            }
         });
 
         socket.on("gameUpdate", ({ from, to }) => {
-            for (let otherSocket of Object.values(rooms[roomId])) {
-                if (otherSocket.id === socket.id){
-                    continue;
+            for (let otherSocketId of room.turnOrder) {
+                if (otherSocketId !== socket.id) {
+                    let otherSocket = room.players[otherSocketId];
+                    if (otherSocket && otherSocket.socket) {
+                        otherSocket.socket.emit("gameUpdate", { from, to });
+                    }
                 }
-                otherSocket.emit("gameUpdate", { from, to });
+            }
+            room.turn = (room.turn + 1) % room.turnOrder.length;
+            const nextPlayer = room.turnOrder[room.turn];
+            for (let otherSocketId of room.turnOrder) {
+                let otherSocket = room.players[otherSocketId];
+                if (otherSocket && otherSocket.socket) {
+                    otherSocket.socket.emit("playerTurn", { playerId: nextPlayer, turnOrder: room.turnOrder });
+                }
             }
         });
     });
