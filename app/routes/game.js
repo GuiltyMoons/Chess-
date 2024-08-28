@@ -15,7 +15,7 @@ function generateRoomCode() {
 let rooms = {}; //TODO: move
 
 router.get("/menu", (req, res) => {
-    res.sendFile("public/game/menu.html", { root: process.cwd() });
+    return res.sendFile("public/game/menu.html", { root: process.cwd() });
 });
 
 router.post("/create", (req, res) => {
@@ -29,7 +29,7 @@ router.get("/:roomId", (req, res) => {
     if (!rooms.hasOwnProperty(roomId)) {
         return res.status(404).send(); //TODO: should not crash
     }
-    res.sendFile("public/game/chess.html", { root: process.cwd() });
+    return res.sendFile("public/game/chess.html", { root: process.cwd() });
 });
 
 function initSocket(io) {
