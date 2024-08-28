@@ -2,16 +2,26 @@
 <html lang="en">
 <head>
     <title>Chess++</title>
+    <link rel="stylesheet" href="/layout.css">
+    <style>
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-    <button id="match"><strong>Find a match</strong></button>
-    <button><strong>How to Play</strong></button>
-    <button onclick="window.location.href='/auth/login'"><strong>Login</strong></button>
-    <button onclick="window.location.href='/auth/signup'"><strong>Sign Up</strong></button>
+    <div class="button-container">
+        <button id="match">Find a match</button>
+        <button>How to Play</button>
+        <button onclick="window.location.href='/auth/login'">Login</button>
+        <button onclick="window.location.href='/auth/signup'">Sign Up</button>
+    </div>
+    <!-- TODO: Remove login and signup, add logout instead. Maybe refactor this page to be the account page? -->
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
-    <script src="\game\menu.js"></script>
+    <script src="/game/menu.js"></script>
 </body>
-
-<!-- TODO: make menu.html nicer to look at. -->
 </html>
