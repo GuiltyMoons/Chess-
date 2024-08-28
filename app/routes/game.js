@@ -14,8 +14,8 @@ function generateRoomCode() {
 
 let rooms = {}; //TODO: move
 
-router.get("/menu", (req, res) => {
-    return res.sendFile("public/game/menu.html", { root: process.cwd() });
+router.get("/dashboard", (req, res) => {
+    return res.sendFile("public/game/dashboard.html", { root: process.cwd() });
 });
 
 router.post("/create", (req, res) => {
@@ -27,7 +27,7 @@ router.post("/create", (req, res) => {
 router.get("/:roomId", (req, res) => {
     let { roomId } = req.params;
     if (!rooms.hasOwnProperty(roomId)) {
-        return res.status(404).send(); //TODO: should not crash
+	    return res.status(404).sendFile("public/error/404.html", { root: process.cwd() }); //TODO: Maybe change this?
     }
     return res.sendFile("public/game/chess.html", { root: process.cwd() });
 });

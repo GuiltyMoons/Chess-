@@ -32,7 +32,7 @@ img {
     background-color: #f2f2f2;
 }
 /* TODO: implement server-sided fog of war. */
-/* TODO: If we have time, change the highlight color based on the player's turn. also i'm such a CSS god -Nico */
+/* TODO: If we have time, change the highlight color based on the player's turn */
 .highlight {
     background-color: rgba(144, 238, 144, 0.7);
     border: 2px solid rgba(60, 179, 113, 1);

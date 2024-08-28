@@ -28,17 +28,3 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 1. Run the following command:
 
         fly deploy
-
-## Routes
-
-Deployed Routes:
-https://chesspp.fly.dev/auth/signup
-https://chesspp.fly.dev/auth/login
-https://chesspp.fly.dev/game/menu
-
-Local Routes:
-http://localhost:3000/auth/signup
-http://localhost:3000/auth/login
-http://localhost:3000/game/menu
-
-**Note: Undefined routes will default to the signup page.**
