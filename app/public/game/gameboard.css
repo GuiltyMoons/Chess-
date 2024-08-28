@@ -11,7 +11,7 @@
 #cell > div {
     height: 100%;
     width: 100%;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
 }
 
 img {
@@ -22,16 +22,14 @@ img {
 
 .white-cell {
     background-color: #fff2ccd3;
-    border: 1px solid black;
 }
 
 .black-cell {
     background-color: #cf7f1dac;
-    border: 1px solid black;
 }
 
 .cutout {
-    background-color: white;
+    background-color: #f2f2f2;
 }
 /* TODO: implement server-sided fog of war. */
 /* TODO: If we have time, change the highlight color based on the player's turn. also i'm such a CSS god -Nico */
