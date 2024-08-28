@@ -14,7 +14,6 @@ html, body {
     align-items: center;
 }
 
-/* Container */
 .container {
     text-align: center;
     width: 100%;
@@ -25,7 +24,6 @@ html, body {
     justify-content: center;
 }
 
-/* Typography */
 .title, h1 {
     font-size: 3em;
     font-weight: 900;
@@ -34,7 +32,6 @@ html, body {
     margin-bottom: 20px;
 }
 
-/* Form */
 form {
     display: flex;
     flex-direction: column;
@@ -42,14 +39,14 @@ form {
     width: 100%;
 }
 
-/* Inputs and Buttons */
-input, button {
+input {
     width: 100%;
     padding: 10px;
     margin: 5px 0;
 }
 
 button {
+    padding: 10px 20px;
     margin-top: 10px;
     font-size: 1.2em;
     background-color: #4CAF50;
@@ -64,7 +61,6 @@ button:hover {
     background-color: #45a049;
 }
 
-/* Messages */
 .message {
     margin-top: 20px;
     padding: 10px;
@@ -87,7 +83,6 @@ button:hover {
     border: 1px solid #f5c6cb;
 }
 
-/* Links */
 p {
     margin-top: 20px;
 }
@@ -97,7 +92,6 @@ a {
     color: blue;
 }
 
-/* Game Area (if applicable) */
 .game-area {
     width: 40vw;
     aspect-ratio: 1/1;
