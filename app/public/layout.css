@@ -1,38 +1,106 @@
-body, html {
+/* Global Styles */
+* {
     margin: 0;
     padding: 0;
-    width: 100%;
+    box-sizing: border-box;
+}
+
+html, body {
     height: 100%;
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+/* Container */
 .container {
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
-.title {
+
+/* Typography */
+.title, h1 {
     font-size: 3em;
+    font-weight: 900;
+    text-transform: uppercase;
     color: #333;
+    margin-bottom: 20px;
 }
-.game-area {
-    width: 40vw;
-    aspect-ratio: 1/1;
-    background-color: #fff;
-    border: 2px solid #ccc;
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
+
+/* Inputs and Buttons */
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+
 button {
-    margin-top: 20px;
-    padding: 10px 20px;
+    margin-top: 10px;
     font-size: 1.2em;
     background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #45a049;
+}
+
+/* Messages */
+.message {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Links */
+p {
+    margin-top: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: blue;
+}
+
+/* Game Area (if applicable) */
+.game-area {
+    width: 40vw;
+    aspect-ratio: 1/1;
+    background-color: #fff;
+    border: 2px solid #ccc;
 }

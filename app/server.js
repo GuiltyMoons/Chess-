@@ -41,9 +41,8 @@ app.use("/auth", authRoutes);
 app.use("/game", gameRoutes);
 initSocket(io);
 
-//TODO: This is basically a try-catch block. If a user tries to access a page taht doesnt exist, they just default go to the signup page.
+//TODO: This is basically a try-catch block. If a user tries to access a page that doesnt exist, they just default go to the menu page.
 app.get("*", (req, res) => {
-    // res.redirect("/auth/signup");
 	return res.redirect("/game/menu");
 });
 
