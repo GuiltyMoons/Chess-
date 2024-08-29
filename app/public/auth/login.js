@@ -10,10 +10,8 @@ button.addEventListener("click", async (event) => {
     let message = document.getElementById("message");
 
     try {
-        //TODO: currently redirects you to game page after login, but should actually make cookies and direct you to main site
-        await axios.post("login", body);
-        // window.location.href = "/game/play"; // redirect to game page
-        window.location.pathname = "game/menu";
+        await axios.post("/auth/login", body);
+        window.location.href = "/game/dashboard";
 
     } catch (error) {
         message.textContent = error.response.data.message;

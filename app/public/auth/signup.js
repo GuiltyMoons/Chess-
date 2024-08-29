@@ -17,7 +17,7 @@ button.addEventListener("click", async (event) => {
     }
 
     const body = {
-        username: document.getElementById("username-input").value, //TODO: database breaks if you put in a chinese character...
+        username: document.getElementById("username-input").value,
         email: document.getElementById("email-input").value,
         password: password,
     }

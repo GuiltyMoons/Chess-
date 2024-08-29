@@ -3,8 +3,14 @@ CREATE DATABASE chesspp;
 \c chesspp
 
 CREATE TABLE users (
-	id SERIAL PRIMARY KEY,                -- Unique identifier for each user
-    username VARCHAR(50) NOT NULL UNIQUE, -- Username for login, must be unique
-    email VARCHAR(100) NOT NULL UNIQUE,   -- Email address, must be unique
-    password_hash VARCHAR(255) NOT NULL   -- Hashed password for security
+	id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE sessions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    token TEXT NOT NULL UNIQUE
 );

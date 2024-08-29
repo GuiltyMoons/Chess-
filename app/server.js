@@ -7,16 +7,25 @@ const express = require("express");
 const { Pool } = require("pg");
 const { Server } = require("socket.io");
 const http = require("http");
+const cookieParser = require("cookie-parser");
 
-const app = express();
 let host;
 const port = 3000;
 
+const app = express();
+const { router: authRoutes, authenticateToken } = require("./routes/auth");
+const { router: gameRoutes, initSocket} = require("./routes/game");
 const server = http.createServer(app);
 const io = new Server(server);
 
 app.use(express.json());
 app.use(express.static("public"));
+app.use(cookieParser());
+
+app.use("/auth", authRoutes);
+app.use("/game/*", authenticateToken);
+app.use("/game", gameRoutes);
+initSocket(io);
 
 // fly.io sets NODE_ENV to production automatically, otherwise it's unset when running locally
 let databaseConfig;
@@ -34,21 +43,10 @@ pool.connect().then(() => {
 	console.log("Connected to db"); 
 });
 
-const authRoutes = require("./routes/auth");
-const { router: gameRoutes, initSocket} = require("./routes/game");
-
-app.use("/auth", authRoutes);
-app.use("/game", gameRoutes);
-initSocket(io);
-
-//TODO: This is basically a try-catch block. If a user tries to access a page taht doesnt exist, they just default go to the signup page.
 app.get("*", (req, res) => {
-    // res.redirect("/auth/signup");
-	res.redirect("/game/menu");
+	return res.status(404).sendFile("public/error/404.html", { root: process.cwd() });
 });
 
 server.listen(port, host, () => {
     console.log(`Listening at: http://${host}:${port}`);
 });
-
-//TODO: add returns to responses

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Chess++</title>
+    <link rel="stylesheet" href="/layout.css">
+    <style>
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button id="match">Find a match</button>
+        <button>How to Play</button>
+        <button onclick="window.location.href='/auth/login'">Login</button>
+        <button onclick="window.location.href='/auth/signup'">Sign Up</button>
+        <button id="logout">Logout</button>
+    </div>
+    <!-- TODO: Remove login and signup. -->
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+    <script src="/game/dashboard.js"></script>
+</body>
+</html>
