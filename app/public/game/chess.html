@@ -3,9 +3,16 @@
 <head>
     <title>Chess++</title>
     <link rel="stylesheet" href="./layout.css">
+    <link rel="stylesheet" href="./user.css">
     <link rel="stylesheet" href="gameboard.css">
 </head>
 <body>
+    <div class="username-container" id="username">
+        <div class="dropdown-menu">
+            <button id="logout">Logout</button>
+        </div>
+    </div>
+
     <div class="container">
         <div class="title">Chess++</div>
         <div class="game-area">
@@ -15,5 +22,7 @@
     <script type="module" src = "./board/board.js"></script>
     <script type="module" src="./main.js"></script>
     <script src = "https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+    <script src="/user.js"></script>
 </body>
 </html>

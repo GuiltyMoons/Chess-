@@ -20,9 +20,6 @@ Our project aims to create a 4-player game of chess with fog of war, with unexpe
 
 	npm run start:dev
 
-6. See [Routes](#Routes) to see the available links.
-
-
 ## Deployment Instructions
 
 1. Run the following command:
