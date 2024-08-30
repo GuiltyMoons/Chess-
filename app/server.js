@@ -3,7 +3,6 @@
 // and if we aren't in its cwd, all relative paths will break
 
 // TODO: implement rejoining game
-// TODO: implement instruction on how to play
 process.chdir(__dirname);
 
 const express = require("express");

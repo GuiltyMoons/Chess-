@@ -53,4 +53,33 @@ logout.addEventListener("click", async () => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const colors = ["#0000B2", "#00B200", "#B20000", "#B2B200", "#0000B2"];
+    let colorIndex = 0;
+
+    const titleElements = document.querySelectorAll('h1, .title');
+    const buttonElements = document.querySelectorAll('button, .username-container');
+
+    function applyColor(element, isButton = false) {
+        if (isButton) {
+            element.style.backgroundColor = colors[colorIndex];
+        } else {
+            element.style.color = colors[colorIndex];
+        }
+        colorIndex = (colorIndex + 1) % colors.length;
+    }
+
+    titleElements.forEach((element) => {
+        element.addEventListener('mouseenter', function () {
+            applyColor(this);
+        });
+    });
+
+    buttonElements.forEach((element) => {
+        element.addEventListener('mouseenter', function () {
+            applyColor(this, true);
+        });
+    });
+});
+
 //TODO: What happens if a user logs out of an in-progress game?
