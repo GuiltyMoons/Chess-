@@ -97,3 +97,52 @@ a {
     aspect-ratio: 1/1;
     background-color: #fff;
 }
+
+/* Username CSS */
+.username-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.username-container:hover {
+    background-color: #45a049;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 45px;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    width: 180px;
+    text-align: center;
+    overflow: hidden; /* To maintain border-radius on hover */
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: #4CAF50;
+    color: white;
+}
