@@ -40,7 +40,7 @@ router.post("/create", (req, res) => {
 router.get("/:roomId", (req, res) => {
     let { roomId } = req.params;
     if (!rooms.hasOwnProperty(roomId)) {
-	    return res.status(404).sendFile("public/error/404.html", { root: process.cwd() }); //TODO: Maybe change this?
+	    return res.status(404).sendFile("public/error/404.html", { root: process.cwd() });
     }
     return res.sendFile("public/game/chess.html", { root: process.cwd() });
 });
