@@ -21,11 +21,27 @@ function authenticateToken(req, res, next) {
         return res.status(403).sendFile("public/error/403.html", { root: process.cwd() });
     }
 
-    pool.query("SELECT user_id FROM sessions WHERE token = $1", [token], (err, result) => {
+    pool.query("SELECT user_id FROM sessions WHERE token = $1", [token], async (err, result) => {
         if (err || !result || result.rows.length === 0) {
             return res.status(403).sendFile("public/error/403.html", { root: process.cwd() });
         }
-        next();
+
+        try {
+            const userResult = await pool.query("SELECT username FROM users WHERE id = $1", [result.rows[0].user_id]);
+            if (userResult.rows.length === 0) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            req.user = {
+                id: result.rows[0].user_id,
+                username: userResult.rows[0].username,
+            };
+
+            next();
+        } catch (error) {
+            console.error("Error fetching user information:", error);
+            return res.status(500).json({ message: "Internal server error" });
+        }
     });
 }
 

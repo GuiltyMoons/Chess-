@@ -1,6 +1,8 @@
 // make this script's dir the cwd
 // b/c npm run start doesn't cd into src/ to run this
 // and if we aren't in its cwd, all relative paths will break
+
+// TODO: implement rejoining game
 process.chdir(__dirname);
 
 const express = require("express");
@@ -41,6 +43,10 @@ if (process.env.NODE_ENV == "production") {
 let pool = new Pool(databaseConfig);
 pool.connect().then(() => {
 	console.log("Connected to db"); 
+});
+
+app.get("/", (req, res) => {
+	return res.status(200).redirect("/game/dashboard");
 });
 
 app.get("*", (req, res) => {
