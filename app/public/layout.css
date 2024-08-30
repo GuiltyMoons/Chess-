@@ -56,6 +56,10 @@ button {
     transition: background-color 0.3s ease;
 }
 
+button:hover {
+    background-color: #333333;
+}
+
 .message {
     margin-top: 20px;
     padding: 10px;
@@ -85,6 +89,11 @@ p {
 a {
     text-decoration: none;
     color: blue;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+a:hover {
+    color: #6495ed;
 }
 
 .game-area {
@@ -107,6 +116,10 @@ a {
     transition: background-color 0.3s ease;
     display: flex;
     align-items: center;
+}
+
+.username-container:hover {
+    background-color: #333333;
 }
 
 .dropdown-menu {
