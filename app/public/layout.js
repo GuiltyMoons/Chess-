@@ -52,3 +52,5 @@ logout.addEventListener("click", async () => {
         console.error("There was an error logging out:", error);
     }
 });
+
+//TODO: What happens if a user logs out of an in-progress game?
