@@ -20,7 +20,7 @@ router.get("/dashboard", (req, res) => {
 
 router.post("/create", (req, res) => {
     let roomId = generateRoomCode();
-    rooms[roomId] = {players:{}, turnOrder: [], turn: 0};
+    rooms[roomId] = {players:{}, turnOrder: [], turn: 0, board: [[]] };
     return res.json({roomId});
 });
 
@@ -44,12 +44,34 @@ function initSocket(io) {
 
         let room = rooms[roomId];
 
+        if (room.players.hasOwnProperty(socket.id)) { //TODO: PLAYER RECONNECT MISSING ACCOUNT IDENTIFICATION
+            let existingPlayer = room.players[socket.id];
+            socket.emit("assignColor", {color: existingPlayer.color});
+            
+            for (let playerSocket of Object.values(room.players)) {
+                if (playerSocket && playerSocket.socket && playerSocket.socket.id !== socket.id) {
+                    //TODO: CAN NOT TEST SAVED BOARD STATE UNTIL PLAYER CAN RECONNECT
+                    playerSocket.socket.emit("playerRejoined", { id: socket.id, color: existingPlayer.color, board: room.board})
+                }
+            }
+            if (room.turnOrder.includes(socket.id)) {
+                socket.emit("playerTurn", { playerId: room.turnOrder[room.turn], turnOrder: room.turnOrder });
+            }
+            return;
+        }
+
         const colors = ["blue", "green", "red", "yellow"];
         if (Object.keys(room.players).length < colors.length) {
             let playerColor = colors[Object.keys(room.players).length];
             room.players[socket.id] = { color: playerColor, socket: socket };
             room.turnOrder.push(socket.id);
             socket.emit("assignColor", { color: playerColor });
+
+            const playerList = Object.keys(room.players).map(id => ({
+                id,
+                color: room.players[id].color
+            }));
+            socket.emit("playerList", playerList);
 
             for (let playerSocket of Object.values(room.players)) {
                 if (playerSocket && playerSocket.socket) {
@@ -78,17 +100,28 @@ function initSocket(io) {
 
             for (let player of Object.values(room.players)) {
                 if (player && player.socket) {
-                    player.socket.emit("playerLeft", socket.id);
+                    player.socket.emit("playerLeft", { id: socket.id });
+                }
+            }
+
+            const updatedPlayerList = Object.entries(room.players).map(([id, player]) => ({
+                id,
+                color: player.color
+            }));
+            for (let player of Object.values(room.players)) {
+                if (player && player.socket) {
+                    player.socket.emit("playerList", updatedPlayerList);
                 }
             }
         });
 
-        socket.on("gameUpdate", ({ from, to }) => {
+        socket.on("gameUpdate", ({ from, to, board }) => {
             for (let otherSocketId of room.turnOrder) {
                 if (otherSocketId !== socket.id) {
                     let otherSocket = room.players[otherSocketId];
                     if (otherSocket && otherSocket.socket) {
-                        otherSocket.socket.emit("gameUpdate", { from, to });
+                        otherSocket.socket.emit("gameUpdate", { from, to, board });
+                        room.board = board;
                     }
                 }
             }
