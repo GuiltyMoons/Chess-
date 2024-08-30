@@ -3,33 +3,65 @@
 <head>
     <title>Chess++</title>
     <link rel="stylesheet" href="/layout.css">
-    <style>
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-    </style>
+    <link rel="stylesheet" href="/game/dashboard.css">
 </head>
 <body>
+    <div class="container">
+        <div class="title">Chess++</div>
+        <div class="button-container">
+            <button id="match">Find a match</button>
+            <button id="howToPlayBtn">How to Play</button>
+        </div>
+    </div>
+
     <div class="username-container" id="username">
         <div class="dropdown-menu">
             <button id="logout">Logout</button>
         </div>
     </div>
 
-    <div class="button-container">
-        <button id="match">Find a match</button>
-        <button>How to Play</button>
-        <button onclick="window.location.href='/auth/login'">Login</button>
-        <button onclick="window.location.href='/auth/signup'">Sign Up</button>
+    <div id="howToPlayModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>How to Play</h2>
+            <p><strong>Chess++</strong> is a 4-player chess game with a unique twist: fog of war. 
+                The fog obscures the board, but your pieces will clear the fog in the spaces directly around them, 
+                revealing the positions of other pieces. The objective is to gain as many points as possible by 
+                capturing opponent pieces, checking enemy kings, and checkmating opponents.</p>
+
+            <ul>
+                <li>5 points per check</li>
+                <li>20 points per checkmate</li>
+                <li>1 point per pawn</li>
+                <li>3 points per knight</li>
+                <li>5 points per rook and bishop</li>
+                <li>9 points per queen</li>
+            </ul>
+            <!-- TODO: finis how2play -->
+        </div>
     </div>
-    <!-- TODO: Remove login and signup. -->
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
     <script src="/layout.js"></script>
     <script src="/game/dashboard.js"></script>
+
+    <script>
+        const modal = document.getElementById("howToPlayModal");
+        const btn = document.getElementById("howToPlayBtn");
+        const span = document.getElementsByClassName("close")[0];
+        btn.onclick = function() {
+            modal.style.display = "flex";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
