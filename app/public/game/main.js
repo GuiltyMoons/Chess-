@@ -8,9 +8,9 @@ const socket = io();
 let playerColor;
 let currentPlayer;
 let playerTurn = [];
-let playersJoined = {};
 let highlightedDiv = []
 let pieceClicked;
+let playersList = {};
 
 function highlight(moves) {
     moves.forEach(({ row, col }) => {
@@ -59,8 +59,17 @@ function updateVisibilityForCurrentPlayer() { //TODO: fix fog bug where captured
         }
     }
 }
+function setUpClicks() {
+    cell.removeEventListener("click", handleClicks);
+    console.log("remove");
+    console.log(Object.keys(playersList).length);
+    if (Object.keys(playersList).length === 4) {
+        cell.addEventListener("click", handleClicks);
+        console.log("added");
+    }
+}
 
-cell.addEventListener("click", (event) => {
+function handleClicks(event) {
     const tile = event.target.closest(".tile");
 
     if (!tile) {
@@ -88,7 +97,8 @@ cell.addEventListener("click", (event) => {
                         row: previousPosition.row,
                         col: previousPosition.col
                     },
-                    to: positionDict
+                    to: positionDict,
+                    board: initialBoard
                 });
                 pieceClicked = null;
             } else {
@@ -119,11 +129,12 @@ cell.addEventListener("click", (event) => {
                 row: previousPosition.row,
                 col: previousPosition.col
             },
-            to: currentPosition
+            to: currentPosition,
+            board: initialBoard
         });
         pieceClicked = null;
     }
-});
+}
 
 socket.on("assignColor", ({ color }) => {
     playerColor = color;
@@ -131,8 +142,9 @@ socket.on("assignColor", ({ color }) => {
 });
 
 socket.on("playerJoined", ({ id, color }) => {
-    playersJoined[id] = color;
+    playersList[id] = color;
     console.log(`${color} player joined`);//can be changed to put into a msg div instead
+    setUpClicks();
     updateVisibilityForCurrentPlayer();
 });
 
@@ -140,7 +152,7 @@ socket.on("roomFull", () => {
     alert("Room Full");
 });
 
-socket.on("gameUpdate", ({ from, to }) => {
+socket.on("gameUpdate", ({ from, to, board }) => {
     const piece = initialBoard[from.row][from.col];
     if (piece) {
         piece.setPosition(to, initialBoard);
@@ -152,6 +164,28 @@ socket.on("playerTurn", ({ playerId, turnOrder }) => {
     playerTurn = turnOrder;
     currentPlayer = playerId;
     if (socket.id === playerId) {
+        setUpClicks();
         updateVisibilityForCurrentPlayer();
     }
+});
+
+socket.on("playerRejoined", ({ id, color, board }) => { //TODO: PLAYER RECONNECT
+    playersList[id] = color;
+    console.log(`${color} player has rejoined`);
+    setUpClicks();
+});
+
+socket.on("playerLeft", ({ id }) => {
+    console.log(`player ${playersList[id]} has left`);
+    delete playersList[id];
+    console.log(playersList);
+    setUpClicks();
+});
+
+socket.on("playerList", ( playerList ) => {
+    playersList = playerList.reduce((acc, { id, color }) => {
+        acc[id] = color;
+        return acc;
+    }, {});
+    setUpClicks;
 });
