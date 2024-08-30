@@ -2,7 +2,6 @@
 // b/c npm run start doesn't cd into src/ to run this
 // and if we aren't in its cwd, all relative paths will break
 
-// TODO: implement who is logged in
 // TODO: implement rejoining game
 // TODO: implement instruction on how to play
 process.chdir(__dirname);
@@ -45,6 +44,10 @@ if (process.env.NODE_ENV == "production") {
 let pool = new Pool(databaseConfig);
 pool.connect().then(() => {
 	console.log("Connected to db"); 
+});
+
+app.get("/", (req, res) => {
+	return res.status(200).redirect("/game/dashboard");
 });
 
 app.get("*", (req, res) => {
