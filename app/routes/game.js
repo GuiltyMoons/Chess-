@@ -1,6 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const { Pool } = require("pg");
 
+if (process.env.NODE_ENV === "production") {
+    databaseConfig = { connectionString: process.env.DATABASE_URL };
+} else {
+    const { PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT } = process.env;
+    databaseConfig = { PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT };
+}
+
+const pool = new Pool(databaseConfig);
 router.use(express.static("public"));
 
 function generateRoomCode() {
@@ -16,6 +25,10 @@ let rooms = {}; //TODO: move
 
 router.get("/dashboard", (req, res) => {
     return res.sendFile("public/game/dashboard.html", { root: process.cwd() });
+});
+
+router.post("/username", async (req, res) => {
+    return res.status(200).json({ username: req.user.username});
 });
 
 router.post("/create", (req, res) => {

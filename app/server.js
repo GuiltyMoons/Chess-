@@ -4,6 +4,7 @@
 
 // TODO: implement who is logged in
 // TODO: implement rejoining game
+// TODO: implement instruction on how to play
 process.chdir(__dirname);
 
 const express = require("express");
