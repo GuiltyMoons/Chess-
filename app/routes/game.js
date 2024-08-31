@@ -21,7 +21,7 @@ function generateRoomCode() {
     return result;
 }
 
-let rooms = {}; //TODO: move
+let rooms = {}; //TODO: move into database???
 
 router.get("/dashboard", (req, res) => {
     return res.sendFile("public/game/dashboard.html", { root: process.cwd() });

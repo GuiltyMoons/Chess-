@@ -25,8 +25,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 app.use("/auth", authRoutes);
-app.use("/game/*", authenticateToken);
-app.use("/game", gameRoutes);
+app.use("/game", authenticateToken, gameRoutes);
 initSocket(io);
 
 // fly.io sets NODE_ENV to production automatically, otherwise it's unset when running locally
