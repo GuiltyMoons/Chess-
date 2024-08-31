@@ -11,6 +11,7 @@ let playerTurn = [];
 let highlightedDiv = []
 let pieceClicked;
 let playersList = {};
+let userId;
 
 function highlight(moves) {
     moves.forEach(({ row, col }) => {
@@ -59,6 +60,7 @@ function updateVisibilityForCurrentPlayer() { //TODO: fix fog bug where captured
         }
     }
 }
+updateVisibilityForCurrentPlayer();
 function setUpClicks() {
     cell.removeEventListener("click", handleClicks);
     console.log("remove");
@@ -106,7 +108,7 @@ function handleClicks(event) {
             }
             return;
         }
-        if (socket.id !== currentPlayer) {
+        if (userId !== currentPlayer) {
             alert("It's not your turn."); //can be changed to put into a msg div instead
             return;
         }
@@ -136,7 +138,8 @@ function handleClicks(event) {
     }
 }
 
-socket.on("assignColor", ({ color }) => {
+socket.on("assignColor", ({ id, color }) => {
+    userId = id;
     playerColor = color;
     console.log(`Your color is ${playerColor}`); //can be changed to put into a msg div instead
 });
@@ -163,15 +166,22 @@ socket.on("playerTurn", ({ playerId, turnOrder }) => {
     console.log("your turn", playerId); //can be changed to put into a msg div instead
     playerTurn = turnOrder;
     currentPlayer = playerId;
-    if (socket.id === playerId) {
+    console.log(playerTurn);
+    updateVisibilityForCurrentPlayer();
+    setUpClicks();
+    /*if (socket.userId === playerId) {
         setUpClicks();
         updateVisibilityForCurrentPlayer();
-    }
+    }*/
 });
 
 socket.on("playerRejoined", ({ id, color, board }) => { //TODO: PLAYER RECONNECT
     playersList[id] = color;
     console.log(`${color} player has rejoined`);
+    console.log("iBoard", initialBoard)
+    console.log("new board", board);
+    initialBoard = board;
+    updateVisibilityForCurrentPlayer();
     setUpClicks();
 });
 
@@ -185,7 +195,7 @@ socket.on("playerLeft", ({ id }) => {
 socket.on("playerList", ( playerList ) => {
     playersList = playerList.reduce((acc, { id, color }) => {
         acc[id] = color;
+        console.log(`player list:`, playersList);
         return acc;
     }, {});
-    setUpClicks;
 });

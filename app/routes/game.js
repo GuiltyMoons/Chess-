@@ -1,6 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const { Pool } = require("pg");
+const cookieParser = require("cookie-parser");
+const http = require("http");
+const { Server } = require("socket.io");
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+app.use(cookieParser());
 
 if (process.env.NODE_ENV === "production") {
     databaseConfig = { connectionString: process.env.DATABASE_URL };
@@ -33,7 +41,7 @@ router.post("/username", async (req, res) => {
 
 router.post("/create", (req, res) => {
     let roomId = generateRoomCode();
-    rooms[roomId] = {players:{}, turnOrder: [], turn: 0, board: [[]] };
+    rooms[roomId] = {players:{}, turnOrder: [], turn: 0, board: {}};
     return res.json({roomId});
 });
 
@@ -45,8 +53,28 @@ router.get("/:roomId", (req, res) => {
     return res.sendFile("public/game/chess.html", { root: process.cwd() });
 });
 
+function parseCookies(cookieHeader) {
+    const cookies = {};
+    if (cookieHeader) {
+        cookieHeader.split(";").forEach(cookie => {
+            const [name, value] = cookie.split("=").map(c => c.trim());
+            cookies[name] = value;
+        });
+    }
+    return cookies;
+}
+
 function initSocket(io) {
+    io.use((socket, next) => {
+        const cookies = socket.handshake.headers.cookie;
+        const parsedCookies = parseCookies(cookies);
+        const userId = parsedCookies['token'];
+        socket.userId = userId;
+        next();
+    });
+
     io.on("connection", (socket) => {
+        let userId = socket.userId;
         let url = socket.handshake.headers.referer;
         let pathParts = url.split("/");
         let roomId = pathParts[pathParts.length - 1];
@@ -56,18 +84,18 @@ function initSocket(io) {
         }
 
         let room = rooms[roomId];
-
-        if (room.players.hasOwnProperty(socket.id)) { //TODO: PLAYER RECONNECT MISSING ACCOUNT IDENTIFICATION
-            let existingPlayer = room.players[socket.id];
-            socket.emit("assignColor", {color: existingPlayer.color});
+        console.log(room);
+        if (room.players.hasOwnProperty(userId)) { //TODO: PLAYER RECONNECT MISSING ACCOUNT IDENTIFICATION
+            let existingPlayer = room.players[userId];
+            socket.emit("assignColor", {id: userId, color: existingPlayer.color});
             
             for (let playerSocket of Object.values(room.players)) {
-                if (playerSocket && playerSocket.socket && playerSocket.socket.id !== socket.id) {
+                if (playerSocket && playerSocket.socket && playerSocket.userId !== userId) {
                     //TODO: CAN NOT TEST SAVED BOARD STATE UNTIL PLAYER CAN RECONNECT
-                    playerSocket.socket.emit("playerRejoined", { id: socket.id, color: existingPlayer.color, board: room.board})
+                    playerSocket.socket.emit("playerRejoined", { id: userId, color: existingPlayer.color, board: room.board})
                 }
             }
-            if (room.turnOrder.includes(socket.id)) {
+            if (room.turnOrder.includes(userId)) {
                 socket.emit("playerTurn", { playerId: room.turnOrder[room.turn], turnOrder: room.turnOrder });
             }
             return;
@@ -76,9 +104,9 @@ function initSocket(io) {
         const colors = ["blue", "green", "red", "yellow"];
         if (Object.keys(room.players).length < colors.length) {
             let playerColor = colors[Object.keys(room.players).length];
-            room.players[socket.id] = { color: playerColor, socket: socket };
-            room.turnOrder.push(socket.id);
-            socket.emit("assignColor", { color: playerColor });
+            room.players[userId] = { color: playerColor, socket: socket };
+            room.turnOrder.push(userId);
+            socket.emit("assignColor", { id: userId, color: playerColor });
 
             const playerList = Object.keys(room.players).map(id => ({
                 id,
@@ -88,7 +116,7 @@ function initSocket(io) {
 
             for (let playerSocket of Object.values(room.players)) {
                 if (playerSocket && playerSocket.socket) {
-                    playerSocket.socket.emit("playerJoined", { id: socket.id, color: playerColor})
+                    playerSocket.socket.emit("playerJoined", { id: userId, color: playerColor})
                 }
             }
 
@@ -109,11 +137,11 @@ function initSocket(io) {
 
         socket.on("disconnect", () => {
             delete room.players[socket.id];
-            room.turnOrder = room.turnOrder.filter(id => id !== socket.id);
+            room.turnOrder = room.turnOrder.filter(id => id !== userId);
 
             for (let player of Object.values(room.players)) {
                 if (player && player.socket) {
-                    player.socket.emit("playerLeft", { id: socket.id });
+                    player.socket.emit("playerLeft", { id: userId });
                 }
             }
 
@@ -130,7 +158,7 @@ function initSocket(io) {
 
         socket.on("gameUpdate", ({ from, to, board }) => {
             for (let otherSocketId of room.turnOrder) {
-                if (otherSocketId !== socket.id) {
+                if (otherSocketId !== userId) {
                     let otherSocket = room.players[otherSocketId];
                     if (otherSocket && otherSocket.socket) {
                         otherSocket.socket.emit("gameUpdate", { from, to, board });
