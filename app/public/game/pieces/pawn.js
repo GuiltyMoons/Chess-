@@ -9,7 +9,7 @@ const imgSources = {
 };
 
 function Pawn(starting, player){
-	let piece = Piece(starting, player);
+	let piece = Piece(starting, player, "pawn");
 	const initialPosition = starting;
 	const imgSource = imgSources[player];
 	const dom = piece.dom;

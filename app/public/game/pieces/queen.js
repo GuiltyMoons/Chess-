@@ -11,7 +11,7 @@ const imgSources = {
 };
 
 function Queen(starting, player){
-	let piece = Piece(starting, player);
+	let piece = Piece(starting, player, "queen");
 	const imgSource = imgSources[player];
 	const dom = piece.dom;
 	const imageElement = document.createElement("img");

@@ -1,5 +1,7 @@
-function Piece(starting, player) {
+import { serializePiece } from "./serialize.js";
+function Piece(starting, player, pieceType) {
 	let p = player;
+	let type = pieceType;
 	let currentPosition = starting;
 	let previousPosition;
 	let dom = document.createElement("div");
@@ -14,7 +16,7 @@ function Piece(starting, player) {
 		if(typeof boardState[currentPosition.row][currentPosition.col] === "object"){
 			unrender(currentPosition);
 		}
-		boardState[currentPosition.row][currentPosition.col] = this;
+		boardState[currentPosition.row][currentPosition.col] = serializePiece(this);
 		boardState[previousPosition.row][previousPosition.col] = 1;
 
 		unrender(previousPosition);
@@ -40,6 +42,7 @@ function Piece(starting, player) {
 	return {
 		dom,
 		getPlayer: () => p,
+		getType: () => type,
 		getPosition,
 		setPosition,
 		unrender,
