@@ -10,7 +10,6 @@ const imgSources = {
 
 function Pawn(starting, player){
 	let piece = Piece(starting, player, "pawn");
-	const initialPosition = starting;
 	const imgSource = imgSources[player];
 	const dom = piece.dom;
 	const imageElement = document.createElement("img");
@@ -19,7 +18,7 @@ function Pawn(starting, player){
 	dom.append(imageElement);
 
 	function getPossibleMoves(boardState){
-		return getPawnMoves(boardState, piece.getPosition(), piece.getPlayer(), initialPosition);
+		return getPawnMoves(boardState, piece.getPosition(), piece.getPlayer(), starting);
 	}
 
 	return {
