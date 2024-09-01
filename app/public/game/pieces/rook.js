@@ -10,7 +10,7 @@ const imgSources = {
 };
 
 function Rook(starting, player){
-	let piece = Piece(starting, player);
+	let piece = Piece(starting, player, "rook");
 	const imgSource = imgSources[player];
 	const dom = piece.dom;
 	const imageElement = document.createElement("img");

@@ -10,7 +10,7 @@ const imgSources = {
 };
 
 function Bishop(starting, player){
-	let piece = Piece(starting, player);
+	let piece = Piece(starting, player, "bishop");
 	const imgSource = imgSources[player];
 	const dom = piece.dom;
 	const imageElement = document.createElement("img");

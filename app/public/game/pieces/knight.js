@@ -10,7 +10,7 @@ const imgSources = {
 };
 
 function Knight(starting, player){
-	let piece = Piece(starting, player);
+	let piece = Piece(starting, player, "knight");
 	const imgSource = imgSources[player];
 	const dom = piece.dom;
 	const imageElement = document.createElement("img");

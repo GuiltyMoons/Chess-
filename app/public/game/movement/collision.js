@@ -6,7 +6,7 @@ export function collisionDetection(board, newPosition){
 }
 
 export function sameTeamDetection(board, newPosition, player){
-	if(board[newPosition.row][newPosition.col].getPlayer() === player){
+	if(board[newPosition.row][newPosition.col].player === player){
 		return true;
 	}
 	return false;
