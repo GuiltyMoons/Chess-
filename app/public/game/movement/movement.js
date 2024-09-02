@@ -1,5 +1,6 @@
 import { collisionDetection, sameTeamDetection } from "/game/movement/collision.js";
 import { outOfBound } from "/game/movement/positionCheck.js";
+import { yPawn, bPawn, gPawn, rPawn } from "./direction.js";
 
 export function getNonFiniteMoves(boardState, directions, position, player){
 	let moves = []
@@ -50,7 +51,15 @@ export function getPawnMoves(boardState, position, player, initialPosition){
 	let moves = []
 	let row, col;
 
-	if(position === initialPosition){
+	console.log(player === "blue");
+	console.log(position);
+	console.log(bPawn);
+	console.log(bPawn.includes(position));
+	if(player === "yellow" && yPawn.some(pawn => pawn.row === position.row && pawn.col === position.col) || 
+		player === "blue" && bPawn.some(pawn => pawn.row === position.row && pawn.col === position.col) || 
+		player === "red" && rPawn.some(pawn => pawn.row === position.row && pawn.col === position.col) ||
+		player === "green" && gPawn.some(pawn => pawn.row === position.row && pawn.col === position.col)
+	){
 		for(let i = 1; i <=2; i++){
 			switch (player) {
 				case 'blue':
@@ -73,6 +82,8 @@ export function getPawnMoves(boardState, position, player, initialPosition){
 			if(!outOfBound(boardState, row, col)){
 				if(!collisionDetection(boardState, {row, col})){
 					moves.push({row, col});
+				} else {
+					break;
 				}
 			}
 		}
