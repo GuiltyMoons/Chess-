@@ -1,5 +1,5 @@
 import boardFunc from "./board/boardFunc.js";
-import { deserializePiece, serializeBoard } from "./pieces/serialize.js";
+import { deserializePiece, serializeBoard, deserializeBoard } from "./pieces/serialize.js";
 
 let initialBoard = boardFunc.createInitialArray();
 boardFunc.boardSetup(initialBoard);
@@ -61,7 +61,21 @@ function updateVisibilityForCurrentPlayer() { //TODO: fix fog bug where captured
         }
     }
 }
-updateVisibilityForCurrentPlayer();
+function updateUI(board) {
+    for (let row = 0; row < board.length; row++) {
+        for (let col = 0; col < board[row].length; col++) {
+            const piece = board[row][col];
+            const tile = document.getElementById(`${row}-${col}`);
+            if (tile) {
+                tile.innerHTML = "";
+            }
+            if (typeof piece === "object") {
+                let newPiece = deserializePiece(piece);
+                newPiece.render();
+            }
+        }
+    }
+};
 function setUpClicks() {
     cell.removeEventListener("click", handleClicks);
     if (Object.keys(playersList).length === 4) {
@@ -90,6 +104,7 @@ function handleClicks(event) {
                 pieceClicked.setPosition(positionDict, initialBoard);
                 unHighlight();
                 updateVisibilityForCurrentPlayer();
+                console.log("pturn", playerTurn);
                 playerTurn.push(playerTurn.shift());
 
                 socket.emit("gameUpdate", {
@@ -117,6 +132,7 @@ function handleClicks(event) {
             pieceClicked = piece;
         }
     } else if (tile.classList.contains("highlight") && pieceClicked) {
+        console.log("pturn2", playerTurn);
         const previousPosition = pieceClicked.getPosition();
         const currentPosition = positionDict;
         pieceClicked.setPosition(currentPosition, initialBoard);
@@ -138,10 +154,12 @@ function handleClicks(event) {
 
 socket.on("assignColor", ({ id, color }) => {
     userId = id;
+    console.log(`${userId} is ${color}`);
     playerColor = color;
 });
 
 socket.on("playerJoined", ({ id, color }) => {
+    console.log(color, "has joined");
     playersList[id] = color;
     setUpClicks();
     updateVisibilityForCurrentPlayer();
@@ -159,21 +177,23 @@ socket.on("gameUpdate", ({ from, to, board }) => {
 });
 
 socket.on("playerTurn", ({ playerId, turnOrder }) => {
+    console.log(playerId, "turn");
+    console.log("turnorder", turnOrder);
     playerTurn = turnOrder;
     currentPlayer = playerId;
-    setUpClicks();
     updateVisibilityForCurrentPlayer();
-    /*if (socket.userId === playerId) {
-        setUpClicks();
-        updateVisibilityForCurrentPlayer();
-    }*/
 });
 
-socket.on("playerRejoined", ({ id, color, board }) => { //TODO: PLAYER RECONNECT
+socket.on("playerRejoined", ({ id, color, board }) => { 
+    console.log(color, "has rejoined");
     playersList[id] = color;
-    initialBoard = structuredClone(board);
+    if (userId === id) {
+        initialBoard = structuredClone(board);
+        console.log("totalplayers", playersList);
+        updateUI(initialBoard);
+        updateVisibilityForCurrentPlayer(); 
+    };
     setUpClicks();
-    updateVisibilityForCurrentPlayer();
 });
 
 socket.on("playerLeft", ({ id }) => {

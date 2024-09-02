@@ -84,13 +84,19 @@ function initSocket(io) {
         }
 
         let room = rooms[roomId];
-        if (room.players.hasOwnProperty(userId)) { //TODO: PLAYER RECONNECT MISSING ACCOUNT IDENTIFICATION
+        if (room.players.hasOwnProperty(userId)) {
             let existingPlayer = room.players[userId];
+            existingPlayer.socket = socket;
             socket.emit("assignColor", {id: userId, color: existingPlayer.color});
+
+            const playerList = Object.keys(room.players).map(id => ({
+                id,
+                color: room.players[id].color
+            }));
+            socket.emit("playerList", playerList);
             
             for (let playerSocket of Object.values(room.players)) {
-                if (playerSocket && playerSocket.socket && playerSocket.userId !== userId) {
-                    //TODO: CAN NOT TEST SAVED BOARD STATE UNTIL PLAYER CAN RECONNECT
+                if (playerSocket && playerSocket.socket) {
                     playerSocket.socket.emit("playerRejoined", { id: userId, color: existingPlayer.color, board: room.board})
                 }
             }
@@ -136,7 +142,7 @@ function initSocket(io) {
 
         socket.on("disconnect", () => {
             delete room.players[socket.id];
-            room.turnOrder = room.turnOrder.filter(id => id !== userId);
+            //room.turnOrder = room.turnOrder.filter(id => id !== userId);
 
             for (let player of Object.values(room.players)) {
                 if (player && player.socket) {
@@ -156,6 +162,7 @@ function initSocket(io) {
         });
 
         socket.on("gameUpdate", ({ from, to, board }) => {
+            console.log("turnoder", room.turnOrder);
             for (let otherSocketId of room.turnOrder) {
                 if (otherSocketId !== userId) {
                     let otherSocket = room.players[otherSocketId];
@@ -166,7 +173,8 @@ function initSocket(io) {
                 }
             }
             room.turn = (room.turn + 1) % room.turnOrder.length;
-            const nextPlayer = room.turnOrder[room.turn];
+            console.log("roomturn", room.turn)
+            const nextPlayer = room.turnOrder[room.turn];   
             for (let otherSocketId of room.turnOrder) {
                 let otherSocket = room.players[otherSocketId];
                 if (otherSocket && otherSocket.socket) {
