@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === "production") {
 
 const pool = new Pool(databaseConfig);
 router.use(express.static("public"));
+let rooms = {};
 
 function generateRoomCode() {
     let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -28,8 +29,6 @@ function generateRoomCode() {
     }
     return result;
 }
-
-let rooms = {}; //TODO: move
 
 router.get("/dashboard", (req, res) => {
     return res.sendFile("public/game/dashboard.html", { root: process.cwd() });
@@ -103,6 +102,46 @@ function initSocket(io) {
             if (room.turnOrder.includes(userId)) {
                 socket.emit("playerTurn", { playerId: room.turnOrder[room.turn], turnOrder: room.turnOrder });
             }
+
+            socket.on("disconnect", () => {
+                delete room.players[userId].socket;
+    
+                for (let player of Object.values(room.players)) {
+                    if (player && player.socket) {
+                        player.socket.emit("playerLeft", { id: userId });
+                    }
+                }
+    
+                const updatedPlayerList = Object.entries(room.players).map(([id, player]) => ({
+                    id,
+                    color: player.color
+                }));
+                for (let player of Object.values(room.players)) {
+                    if (player && player.socket) {
+                        player.socket.emit("playerList", updatedPlayerList);
+                    }
+                }
+            });
+    
+            socket.on("gameUpdate", ({ from, to, board }) => {
+                for (let otherSocketId of room.turnOrder) {
+                    if (otherSocketId !== userId) {
+                        let otherSocket = room.players[otherSocketId];
+                        if (otherSocket && otherSocket.socket) {
+                            otherSocket.socket.emit("gameUpdate", { from, to, board });
+                            room.board = board;
+                        }
+                    }
+                }
+                room.turn = (room.turn + 1) % room.turnOrder.length;
+                const nextPlayer = room.turnOrder[room.turn];   
+                for (let otherSocketId of room.turnOrder) {
+                    let otherSocket = room.players[otherSocketId];
+                    if (otherSocket && otherSocket.socket) {
+                        otherSocket.socket.emit("playerTurn", { playerId: nextPlayer, turnOrder: room.turnOrder });
+                    }
+                }
+            });
             return;
         }
 
@@ -141,8 +180,7 @@ function initSocket(io) {
         }
 
         socket.on("disconnect", () => {
-            delete room.players[socket.id];
-            //room.turnOrder = room.turnOrder.filter(id => id !== userId);
+            delete room.players[userId].socket;
 
             for (let player of Object.values(room.players)) {
                 if (player && player.socket) {
@@ -154,6 +192,7 @@ function initSocket(io) {
                 id,
                 color: player.color
             }));
+
             for (let player of Object.values(room.players)) {
                 if (player && player.socket) {
                     player.socket.emit("playerList", updatedPlayerList);
@@ -162,7 +201,6 @@ function initSocket(io) {
         });
 
         socket.on("gameUpdate", ({ from, to, board }) => {
-            console.log("turnoder", room.turnOrder);
             for (let otherSocketId of room.turnOrder) {
                 if (otherSocketId !== userId) {
                     let otherSocket = room.players[otherSocketId];
@@ -173,7 +211,6 @@ function initSocket(io) {
                 }
             }
             room.turn = (room.turn + 1) % room.turnOrder.length;
-            console.log("roomturn", room.turn)
             const nextPlayer = room.turnOrder[room.turn];   
             for (let otherSocketId of room.turnOrder) {
                 let otherSocket = room.players[otherSocketId];
