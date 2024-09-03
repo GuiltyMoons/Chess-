@@ -39,3 +39,11 @@ export function serializeBoard(board) {
         )
     )
 }
+
+export function deserializeBoard(board) {
+    return board.map(row =>
+        row.map(cell =>
+            typeof cell === 'object' ? deserializePiece(cell) : cell
+        )
+    )
+}
