@@ -38,18 +38,25 @@ router.post("/username", async (req, res) => {
     return res.status(200).json({ username: req.user.username});
 });
 
-router.post("/create", (req, res) => {
+router.post("/save", async (req, res) => {
+    //TODO:
+});
+
+router.post("/create", (req, res) => { //TODO: Change to DB
     let roomId = generateRoomCode();
     rooms[roomId] = {players:{}, turnOrder: [], turn: 0, board: {}};
     return res.json({roomId});
 });
 
-router.get("/:roomId", (req, res) => {
+router.post("/join", async (req, res) => {
+    //TODO:
+});
+
+router.get("/:roomId", (req, res) => { //TODO: change to DB
     let { roomId } = req.params;
     if (!rooms.hasOwnProperty(roomId)) {
 	    return res.status(404).sendFile("public/error/404.html", { root: process.cwd() });
     }
-    return res.sendFile("public/game/chess.html", { root: process.cwd() });
 });
 
 function parseCookies(cookieHeader) {

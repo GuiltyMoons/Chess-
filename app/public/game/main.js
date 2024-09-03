@@ -61,6 +61,7 @@ function updateVisibilityForCurrentPlayer() { //TODO: fix fog bug where captured
         }
     }
 }
+
 function updateUI(board) {
     for (let row = 0; row < board.length; row++) {
         for (let col = 0; col < board[row].length; col++) {
@@ -76,6 +77,7 @@ function updateUI(board) {
         }
     }
 };
+
 function setUpClicks() {
     cell.removeEventListener("click", handleClicks);
     if (Object.keys(playersList).length === 4) {
@@ -117,12 +119,12 @@ function handleClicks(event) {
                 });
                 pieceClicked = null;
             } else {
-                alert("It's not your piece."); //can be changed to put into a msg div instead
+                alert("It's not your piece."); //TODO: can be changed to put into a msg div instead
             }
             return;
         }
         if (userId !== currentPlayer) {
-            alert("It's not your turn."); //can be changed to put into a msg div instead
+            alert("It's not your turn."); //TODO:can be changed to put into a msg div instead
             return;
         }
         if (piece !== pieceClicked) {
@@ -174,6 +176,15 @@ socket.on("gameUpdate", ({ from, to, board }) => {
     if (piece) {
         piece.setPosition(to, initialBoard);
     }
+
+    let gameState = {
+        initialBoard: serializeBoard(initialBoard),  // Serialized board state
+        playerTurn: playerTurn,                      // Array of player turns
+        currentPlayer: currentPlayer,                // The ID of the current player
+        playersList: playersList,                    // List of players and their colors
+        userId: userId                               // Current user's ID
+    };
+    
 });
 
 socket.on("playerTurn", ({ playerId, turnOrder }) => {
@@ -207,3 +218,4 @@ socket.on("playerList", ( playerList ) => {
         return acc;
     }, {});
 });
+

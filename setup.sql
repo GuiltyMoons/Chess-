@@ -14,3 +14,11 @@ CREATE TABLE sessions (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     token TEXT NOT NULL UNIQUE
 );
+
+CREATE TABLE rooms (
+    room_id VARCHAR(4) PRIMARY KEY,
+    players JSONB NOT NULL,
+    turn_order TEXT[] NOT NULL,
+    turn INTEGER NOT NULL,
+    board JSONB NOT NULL
+);
