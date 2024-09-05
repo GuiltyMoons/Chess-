@@ -47,14 +47,10 @@ export function getFiniteMoves(boardState, directions, position, player){
 }
 
 
-export function getPawnMoves(boardState, position, player, initialPosition){
+export function getPawnMoves(boardState, position, player){
 	let moves = []
 	let row, col;
 
-	console.log(player === "blue");
-	console.log(position);
-	console.log(bPawn);
-	console.log(bPawn.includes(position));
 	if(player === "yellow" && yPawn.some(pawn => pawn.row === position.row && pawn.col === position.col) || 
 		player === "blue" && bPawn.some(pawn => pawn.row === position.row && pawn.col === position.col) || 
 		player === "red" && rPawn.some(pawn => pawn.row === position.row && pawn.col === position.col) ||
