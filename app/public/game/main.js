@@ -1,5 +1,6 @@
 import boardFunc from "./board/boardFunc.js";
-import { deserializePiece, serializeBoard, deserializeBoard } from "./pieces/serialize.js";
+import { deserializePiece, serializeBoard } from "./pieces/serialize.js";
+import { checkCheckMate, checkChecked } from "./movement/positionCheck.js";
 
 let initialBoard = boardFunc.createInitialArray();
 boardFunc.boardSetup(initialBoard);
@@ -7,6 +8,7 @@ boardFunc.boardSetup(initialBoard);
 initialBoard = serializeBoard(initialBoard);
 const socket = io();
 
+let check = false;
 let playerColor;
 let currentPlayer;
 let playerTurn = [];
@@ -104,7 +106,6 @@ function handleClicks(event) {
                 pieceClicked.setPosition(positionDict, initialBoard);
                 unHighlight();
                 updateVisibilityForCurrentPlayer();
-                console.log("pturn", playerTurn);
                 playerTurn.push(playerTurn.shift());
 
                 socket.emit("gameUpdate", {
@@ -127,12 +128,11 @@ function handleClicks(event) {
         }
         if (piece !== pieceClicked) {
             unHighlight();
-            let moves = piece.getPossibleMoves(initialBoard);
+            let moves = piece.getSafeMoves(initialBoard);
             highlight(moves);
             pieceClicked = piece;
         }
     } else if (tile.classList.contains("highlight") && pieceClicked) {
-        console.log("pturn2", playerTurn);
         const previousPosition = pieceClicked.getPosition();
         const currentPosition = positionDict;
         pieceClicked.setPosition(currentPosition, initialBoard);
@@ -154,12 +154,10 @@ function handleClicks(event) {
 
 socket.on("assignColor", ({ id, color }) => {
     userId = id;
-    console.log(`${userId} is ${color}`);
     playerColor = color;
 });
 
 socket.on("playerJoined", ({ id, color }) => {
-    console.log(color, "has joined");
     playersList[id] = color;
     setUpClicks();
     updateVisibilityForCurrentPlayer();
@@ -170,26 +168,26 @@ socket.on("roomFull", () => {
 });
 
 socket.on("gameUpdate", ({ from, to, board }) => {
-    const piece = deserializePiece(initialBoard[from.row][from.col]);
-    if (piece) {
-        piece.setPosition(to, initialBoard);
+    let piece = initialBoard[from.row][from.col];
+    if (typeof piece === "object") {
+        piece = deserializePiece(piece);
+        if (piece) {
+            piece.setPosition(to, initialBoard);
+        }
     }
 });
 
 socket.on("playerTurn", ({ playerId, turnOrder }) => {
-    console.log(playerId, "turn");
-    console.log("turnorder", turnOrder);
     playerTurn = turnOrder;
     currentPlayer = playerId;
     updateVisibilityForCurrentPlayer();
+    check = checkChecked(initialBoard, playerColor);
 });
 
 socket.on("playerRejoined", ({ id, color, board }) => { 
-    console.log(color, "has rejoined");
     playersList[id] = color;
     if (userId === id) {
         initialBoard = structuredClone(board);
-        console.log("totalplayers", playersList);
         updateUI(initialBoard);
         updateVisibilityForCurrentPlayer(); 
     };

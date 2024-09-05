@@ -1,10 +1,17 @@
 import { serializePiece } from "./serialize.js";
+import { legalMoves } from "../movement/positionCheck.js";
+
 function Piece(starting, player, pieceType) {
 	let p = player;
 	let type = pieceType;
 	let currentPosition = starting;
 	let previousPosition;
 	let dom = document.createElement("div");
+
+	function getSafeMoves(boardState) {
+		let moves = this.getPossibleMoves(boardState);
+		return legalMoves(boardState, this.getPosition(), moves, this.getPlayer());
+	}
 
 	function getPosition(){
 		return currentPosition;
@@ -46,7 +53,8 @@ function Piece(starting, player, pieceType) {
 		getPosition,
 		setPosition,
 		unrender,
-		render
+		render,
+		getSafeMoves
 	}
 }
 

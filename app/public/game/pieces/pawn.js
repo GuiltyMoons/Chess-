@@ -18,7 +18,7 @@ function Pawn(starting, player){
 	dom.append(imageElement);
 
 	function getPossibleMoves(boardState){
-		return getPawnMoves(boardState, piece.getPosition(), piece.getPlayer(), starting);
+		return getPawnMoves(boardState, piece.getPosition(), piece.getPlayer());
 	}
 
 	return {
