@@ -74,3 +74,29 @@ export function legalMoves(boardState, currentPosition, availableMoves, color) {
 	}
 	return moves;
 }
+
+export function isPastMiddle(position, player) {
+    switch (player) {
+        case 'blue':
+            if (position.row >= 6 ) {
+                return true;
+            }
+            break;
+        case 'red':
+            if (position.row <= 7 ) {
+                return true;
+            }
+            break;
+        case 'green':
+            if (position.col <= 7 ) {
+                return true;
+            }
+            break;
+        case 'yellow':
+            if (position.col >= 6 ) {
+                return true
+            }
+            break;
+    }
+    return false;
+}
