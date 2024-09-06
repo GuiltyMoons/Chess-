@@ -257,9 +257,8 @@ socket.on("playerList", ( playerList ) => {
 });
 
 socket.on("winner", ({ winner }) => {
-
     alert(`Player ${playersList[winner]} wins!`);
-} )
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     socket.on("message", (msg) => {
