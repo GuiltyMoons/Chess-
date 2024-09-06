@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-//TODO: update routes README
+
 app.use(cookieParser());
 
 if (process.env.NODE_ENV === "production") {
