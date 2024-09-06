@@ -21,6 +21,16 @@ const input = document.getElementById("input");
 const send = document.getElementById("send");
 const msgs = document.getElementById("messages");
 
+document.getElementById('open-chat').addEventListener('click', function() {
+    document.getElementById('modal-overlay').style.display = 'block';
+    document.getElementById('chat-container').style.display = 'flex';
+});
+
+document.getElementById('modal-overlay').addEventListener('click', function() {
+    document.getElementById('modal-overlay').style.display = 'none';
+    document.getElementById('chat-container').style.display = 'none';
+});
+
 function addMessage(msg) {
     const newMsg = document.createElement('div');
     newMsg.textContent = msg;

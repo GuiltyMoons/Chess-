@@ -15,19 +15,28 @@
     <div class="container">
         <div class="title">Chess++</div>
         <div class="game-area">
-            <div id = "cell"></div>
+            <div id="cell"></div>
         </div>
-        <div id = "chat-container">
-            <div id = "chat">
-                <div id = "messages"></div>
+        <!-- Button to open modal -->
+        <button id="open-chat">Open Chat</button>
+
+        <!-- Modal overlay -->
+        <div id="modal-overlay"></div>
+
+        <!-- Chat modal -->
+        <div id="chat-container">
+            <div id="chat">
+                <div id="messages"></div>
             </div>
-            <input type = "text" id = "input"> 
-            <button id = "send">Send</button>
+            <div id="input-container">
+                <input type="text" id="input"> 
+                <button id="send">Send</button>
+            </div>
         </div>
     </div>
-    <script type="module" src = "./board/board.js"></script>
+    <script type="module" src="./board/board.js"></script>
     <script type="module" src="./main.js"></script>
-    <script src = "https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
     <script src="/layout.js"></script>
 </body>

@@ -61,20 +61,36 @@ img {
 }
 
 /* Chatbox stuff below */
+/* Modal overlay */
+#modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+    display: none; /* Hidden by default */
+}
 
+/* Modal chatbox */
 #chat-container {
     position: fixed;
-    bottom: 10px;
-    left: 10px;
+    top: 50%;
+    left: 50%;
     width: 400px;
     max-height: 450px;
+    transform: translate(-50%, -50%);
     border-radius: 10px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     background-color: #f0f0f0;
     overflow: hidden;
-    display: flex;
+    display: none; /* Hidden by default */
+    z-index: 1000; /* Above overlay */
     flex-direction: column;
 }
+
+/* Rest of the styles remain the same */
 
 #chat {
     height: 300px;
