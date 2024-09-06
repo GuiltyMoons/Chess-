@@ -285,6 +285,10 @@ socket.on("winner", ({ winner }) => {
     }
 });
 
+socket.on("checkMated", ({ playerId }) => {
+    alert(`Player ${playersList[playerId]} has been checkmated!`);
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     socket.on("message", (msg) => {
         addMessage(msg);

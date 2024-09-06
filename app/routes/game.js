@@ -200,6 +200,12 @@ async function initSocket(io) {
                 if (!room.checkMatedArr.includes(playerId)){
                     room.checkMatedArr.push(playerId);
                 }
+                for (let otherSocketId of room.turnOrder) {
+                    let otherSocket = room.players[otherSocketId];
+                    if (otherSocket && otherSocket.socket) {
+                        otherSocket.socket.emit("checkMated", playerId);
+                    }
+                }
             });
 
             return;
