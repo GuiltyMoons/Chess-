@@ -30,3 +30,20 @@ export const rPawn = [{row: 12, col: 3}, {row: 12, col: 4}, {row: 12, col: 5},
 export const yPawn = [{row: 3, col: 1}, {row: 4, col: 1}, {row: 5, col: 1},
 	{row: 6, col: 1}, {row: 7, col: 1}, {row: 8, col: 1}, {row: 9, col: 1}, {row: 10, col: 1}
 ]
+
+export const backRow = [{row: 0, col: 3}, {row: 0, col: 10},
+	{row: 0, col: 4}, {row: 0, col: 9},
+	{row: 0, col: 5}, {row: 0, col: 8},
+	{row: 0, col: 7},{row: 0, col: 6},
+	{row: 3, col: 13}, {row: 10, col: 13},
+	{row: 4, col: 13}, {row: 9, col: 13},
+	{row: 5, col: 13}, {row: 8, col: 13},
+	{row: 7, col: 13},{row: 6, col: 13},
+	{row: 13, col: 3}, {row: 13, col: 10},
+	{row: 13, col: 4}, {row: 13, col: 9},
+	{row: 13, col: 5}, {row: 13, col: 8},
+	{row: 13, col: 7},{row: 13, col: 6},
+	{row: 3, col: 0}, {row: 10, col: 0},
+	{row: 4, col: 0}, {row: 9, col: 0},
+	{row: 5, col: 0}, {row: 8, col: 0},
+	{row: 7, col: 0},{row: 6, col: 0}]

@@ -139,7 +139,7 @@ async function initSocket(io) {
                             let otherSocket = room.players[otherSocketId];
                             if (otherSocket && otherSocket.socket) {
                                 otherSocket.socket.emit("gameUpdate", { from, to, board });
-                                room.board = board;
+                                room.board = structuredClone(board);
                             }
                         }
                     }
