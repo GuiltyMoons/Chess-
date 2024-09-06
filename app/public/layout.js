@@ -1,6 +1,6 @@
-async function fetchUsername() {
+async function fetchInfo() {
     try {
-        let res = await axios.post("username");
+        let res = await axios.post("info");
         
         let usernameContainer = document.getElementById('username');
         let textNode = usernameContainer.childNodes[0];
@@ -10,6 +10,9 @@ async function fetchUsername() {
         } else {
             usernameContainer.insertBefore(document.createTextNode(res.data.username), usernameContainer.firstChild);
         }
+
+        let winsElement = document.getElementById("user-wins");
+        winsElement.textContent = `Wins: ${res.data.wins}`
     } catch (error) {
         let usernameContainer = document.getElementById('username');
         let textNode = usernameContainer.childNodes[0];
@@ -23,8 +26,7 @@ async function fetchUsername() {
         console.error("Error retrieving username: ", error);
     }    
 }
-
-fetchUsername();
+fetchInfo();
 
 document.addEventListener("DOMContentLoaded", function () {
     const usernameContainer = document.getElementById('username');

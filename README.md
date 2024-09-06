@@ -1,85 +1,78 @@
 # Chess++
 
-Our project aims to create a 4-player game of chess with fog of war, with unexpected twists and extra features.
+Chess++ is a 4-player chess game with a unique twist: fog of war. The fog obscures the board, but your pieces will clear the fog in the spaces directly around them, 
+revealing the positions of other pieces. The objective is to be the last player standing by checkmating other players and avoid being checkmated yourself. Checkmated opponents
+can no longer play the game.
 
-## How to Play
+## Features
 
-**Chess++** is a 4-player chess game with a unique twist: fog of war. The fog obscures the board, but your pieces will clear the fog in the spaces directly around them, revealing the positions of other pieces. The objective is to gain as many points as possible by capturing opponent pieces, checking enemy kings, and checkmating opponents. Checkmated opponents can no longer play the game.
+- **Fog of War**: Players can only see a limited area around their pieces.
+- **4 Players**: Battle against 3 opponents at the same time.
 
-### Scoring System:
-- 5 points per check
-- 20 points per checkmate
-- 1 point per pawn
-- 3 points per knight
-- 5 points per rook and bishop
-- 9 points per queen
+## Getting Started
 
-## Getting Started Instructions
+### Installation Instructions
 
 1. Clone or download the project repository.
 2. Navigate to the project directory.
-3. Run the following command to install all the dependencies required:
+3. Install all dependencies by running:
 
-        npm install
+    ```bash
+    npm install
+    ```
 
-4. Install postgres if you don't already have it, then run the following command to delete the existing database and set up an empty one:
+4. Install Postgres if you don't already have it, then run the following command to delete the existing database and set up a new one:
 
-        npm run setup:dev
+    ```bash
+    npm run setup:dev
+    ```
 
-**Note: You have to rename `env.sample` to `.env` and replace the fields with your own credentials.**
+    > **Note**: You need to rename `env.sample` to `.env` and replace the fields with your own credentials.
 
 5. Start the server:
 
-	npm run start:dev
+    ```bash
+    npm run start:dev
+    ```
 
-## Routes
+## API Documentation
 
 ### Authentication Routes
 
-- **`GET /auth/signup`**
-  - Renders the signup page if the user is not logged in. If a valid session exists, redirects to the game dashboard.
-  
-- **`POST /auth/signup`**
-  - Handles user registration. Validates the input, hashes the password, and stores the new user in the database.
-  - Request Body: `username`, `email`, `password`
-  
-- **`GET /auth/login`**
-  - Renders the login page if the user is not logged in. If a valid session exists, redirects to the game dashboard.
-  
-- **`POST /auth/login`**
-  - Handles user login. Validates the username and password, generates a session token, and stores it in the database.
-  - Request Body: `username`, `password`
-  
-- **`POST /auth/logout`**
-  - Logs out the user by deleting the session token from the database and clearing the cookie.
+- **`GET /auth/signup`**: Renders the signup page if the user is not logged in. If a valid session exists, redirects to the game dashboard.
+- **`POST /auth/signup`**: Handles user registration, validates the input, hashes the password, and stores the new user in the database.
+    - **Request Body**: `username`, `email`, `password`
+- **`GET /auth/login`**: Renders the login page if the user is not logged in. If a valid session exists, redirects to the game dashboard.
+- **`POST /auth/login`**: Handles user login, validates the credentials, and generates a session token.
+    - **Request Body**: `username`, `password`
+- **`POST /auth/logout`**: Logs out the user by deleting the session token and clearing the cookie.
 
 ### Game Routes
 
-- **`GET /game/dashboard`**
-  - Renders the game dashboard for the authenticated user.
-  
-- **`POST /game/username`**
-  - Returns the username of the authenticated user.
-  
-- **`POST /game/create`**
-  - Creates a new game room with a unique 4-character room code and initializes the game state.
-  
-- **`GET /game/:roomId`**
-  - Joins a game room specified by the `roomId` parameter. If the room does not exist, returns a 404 error.
+- **`GET /game/dashboard`**: Renders the dashboard for the authenticated user.
+- **`POST /game/info`**: Returns the username of the user.
+- **`POST /game/create`**: Creates a new game room with a unique 4-character room code and initializes the game state.
+- **`GET /game/:roomId`**: Joins a game room specified by the `roomId` parameter. Returns a 404 error if the room does not exist.
 
 ### WebSocket Events
 
-- **`connection`**
-  - Handles a new WebSocket connection. Assigns a color to the player, adds them to the game room, and sets up the game turn order.
-  
-- **`disconnect`**
-  - Handles player disconnection by removing the player from the room and updating the turn order.
-  
-- **`gameUpdate`**
-  - Broadcasts the move made by the current player to all other players in the room and updates the turn to the next player.
+- **`connection`**: Handles a new WebSocket connection, assigns a player color, and sets up the game turn order.
+- **`disconnect`**: Removes the player from the room and updates the turn order upon disconnection.
+- **`gameUpdate`**: Broadcasts a move made by the current player to all other players and updates the turn.
+- **`message`**: Sends messages between players in the game.
+- **`checkMated`**: Marks a player as checkmated.
 
 ### Catch-All Route
 
-- **`GET /*`**
-  - Handles any undefined routes and returns a 404 error page.
+- **`GET /*`**: Handles undefined routes and returns a 404 error page.
 
+## Database Setup
+
+The project requires a PostgreSQL database. You need to configure the database connection in the `.env` file as follows:
+```bash
+PGUSER=your_postgres_username
+PGPORT=5432
+PGHOST=localhost
+PGPASSWORD=your_postgres_password
+PGDATABASE=chesspp
+```
