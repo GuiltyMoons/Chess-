@@ -1,6 +1,7 @@
 import boardFunc from "./board/boardFunc.js";
 import { deserializePiece, serializeBoard } from "./pieces/serialize.js";
-import { checkCheckMate, checkChecked } from "./movement/positionCheck.js";
+import { checkCheckMate } from "./movement/positionCheck.js";
+import { backRow } from "./movement/direction.js";
 
 let initialBoard = boardFunc.createInitialArray();
 boardFunc.boardSetup(initialBoard);
@@ -123,7 +124,11 @@ function handleClicks(event) {
         if (piece.getPlayer() !== playerColor) {
             if (tile.classList.contains("highlight")) {
                 const previousPosition = pieceClicked.getPosition();
-                pieceClicked.setPosition(positionDict, initialBoard);
+                if (pieceClicked.getType() === "pawn" && backRow.some(pos => pos.row === positionDict.row && pos.col === positionDict.col)) {
+                    pieceClicked.handlePromotion(initialBoard, positionDict);
+                } else {
+                    pieceClicked.setPosition(positionDict, initialBoard);
+                }
                 unHighlight();
                 updateVisibilityForCurrentPlayer();
                 playerTurn.push(playerTurn.shift());
@@ -155,7 +160,11 @@ function handleClicks(event) {
     } else if (tile.classList.contains("highlight") && pieceClicked) {
         const previousPosition = pieceClicked.getPosition();
         const currentPosition = positionDict;
-        pieceClicked.setPosition(currentPosition, initialBoard);
+        if (pieceClicked.getType() === "pawn" && backRow.some(pos => pos.row === currentPosition.row && pos.col === currentPosition.col)) {
+            pieceClicked.handlePromotion(initialBoard, currentPosition);
+        } else {
+            pieceClicked.setPosition(currentPosition, initialBoard);
+        }
         unHighlight();
         updateVisibilityForCurrentPlayer();
         playerTurn.push(playerTurn.shift());
@@ -189,11 +198,18 @@ socket.on("roomFull", () => {
 });
 
 socket.on("gameUpdate", ({ from, to, board }) => {
+    initialBoard = structuredClone(board);
+    updateUI(initialBoard);
+    updateVisibilityForCurrentPlayer(); 
     let piece = initialBoard[from.row][from.col];
     if (typeof piece === "object") {
         piece = deserializePiece(piece);
         if (piece) {
-            piece.setPosition(to, initialBoard);
+            if (piece.getType() === "pawn" && backRow.some(pos => pos.row === piece.getPosition().row && pos.col === piece.getPosition().col)) {
+                piece.handlePromotion(initialBoard, to);
+            } else {
+                piece.setPosition(to, initialBoard);
+            }
         }
     }
 });

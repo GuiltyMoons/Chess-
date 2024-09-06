@@ -1,5 +1,6 @@
 import Piece from './piece.js'
 import { getPawnMoves } from '../movement/movement.js';
+import Queen from './queen.js';
 
 const imgSources = {
 	blue: '/game/imgs/blue/bPawn.png',
@@ -17,13 +18,19 @@ function Pawn(starting, player){
 	imageElement.src= imgSource;
 	dom.append(imageElement);
 
+	function handlePromotion(boardState, newPosition) {
+		let newPiece = Queen(this.getPosition(), this.getPlayer());
+		newPiece.setPosition(newPosition, boardState);
+	}
+
 	function getPossibleMoves(boardState){
 		return getPawnMoves(boardState, piece.getPosition(), piece.getPlayer());
 	}
 
 	return {
 		...piece,
-		getPossibleMoves
+		getPossibleMoves,
+		handlePromotion
 	}
 }
 
