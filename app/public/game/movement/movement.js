@@ -57,7 +57,7 @@ export function getPawnMoves(boardState, position, player){
 			player === "red" && rPawn.some(pawn => pawn.row === position.row && pawn.col === position.col) ||
 			player === "green" && gPawn.some(pawn => pawn.row === position.row && pawn.col === position.col)
 		){
-			for(let i = 1; i <=10; i++){
+			for(let i = 1; i <=2; i++){
 				switch (player) {
 					case 'blue':
 						row = position.row + i;
