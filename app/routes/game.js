@@ -40,7 +40,8 @@ router.post("/username", async (req, res) => {
 
 router.post("/create", (req, res) => {
     let roomId = generateRoomCode();
-    rooms[roomId] = {players:{}, turnOrder: [], turn: 0, board: {}};
+    
+    rooms[roomId] = {players:{}, turnOrder: [], turn: 0, board: {}, checkMatedArr: [], winner: null};
     return res.json({roomId});
 });
 
@@ -132,15 +133,26 @@ async function initSocket(io) {
             });
     
             socket.on("gameUpdate", ({ from, to, board }) => {
-                for (let otherSocketId of room.turnOrder) {
-                    if (otherSocketId !== userId) {
-                        let otherSocket = room.players[otherSocketId];
-                        if (otherSocket && otherSocket.socket) {
-                            otherSocket.socket.emit("gameUpdate", { from, to, board });
-                            room.board = board;
+                if (from !== null && to !== null) {
+                    for (let otherSocketId of room.turnOrder) {
+                        if (otherSocketId !== userId) {
+                            let otherSocket = room.players[otherSocketId];
+                            if (otherSocket && otherSocket.socket) {
+                                otherSocket.socket.emit("gameUpdate", { from, to, board });
+                                room.board = board;
+                            }
                         }
                     }
                 }
+                if (room.checkMatedArr.length === 3) {
+                    room.winner = room.turnOrder.filter(player => !room.checkMatedArr.includes(player));
+                    for (let otherSocketId of room.turnOrder) {
+                        let otherSocket = room.players[otherSocketId];
+                        if (otherSocket && otherSocket.socket) {
+                            otherSocket.socket.emit("winner", {winner: room.winner})
+                        }
+                    }
+                };
                 room.turn = (room.turn + 1) % room.turnOrder.length;
                 const nextPlayer = room.turnOrder[room.turn];   
                 for (let otherSocketId of room.turnOrder) {
@@ -157,6 +169,12 @@ async function initSocket(io) {
                     if (otherSocket && otherSocket.socket) {
                         otherSocket.socket.emit("message", msg);
                     }
+                }
+            });
+
+            socket.on("checkMated", (playerId) => {
+                if (!room.checkMatedArr.includes(playerId)){
+                    room.checkMatedArr.push(playerId);
                 }
             });
 
@@ -193,7 +211,7 @@ async function initSocket(io) {
             }
         } else {
             socket.emit("roomFull");
-            socket.disconnect(); //This can be changed to redirect to menu or spec later
+            socket.disconnect();
             return;
         }
 
@@ -219,15 +237,26 @@ async function initSocket(io) {
         });
 
         socket.on("gameUpdate", ({ from, to, board }) => {
-            for (let otherSocketId of room.turnOrder) {
-                if (otherSocketId !== userId) {
-                    let otherSocket = room.players[otherSocketId];
-                    if (otherSocket && otherSocket.socket) {
-                        otherSocket.socket.emit("gameUpdate", { from, to, board });
-                        room.board = board;
+            if (from !== null && to !== null) {
+                for (let otherSocketId of room.turnOrder) {
+                    if (otherSocketId !== userId) {
+                        let otherSocket = room.players[otherSocketId];
+                        if (otherSocket && otherSocket.socket) {
+                            otherSocket.socket.emit("gameUpdate", { from, to, board });
+                            room.board = board;
+                        }
                     }
                 }
             }
+            if (room.checkMatedArr.length === 3) {
+                room.winner = room.turnOrder.filter(player => !room.checkMatedArr.includes(player));
+                for (let otherSocketId of room.turnOrder) {
+                    let otherSocket = room.players[otherSocketId];
+                    if (otherSocket && otherSocket.socket) {
+                        otherSocket.socket.emit("winner", {winner: room.winner})
+                    }
+                }
+            };
             room.turn = (room.turn + 1) % room.turnOrder.length;
             const nextPlayer = room.turnOrder[room.turn];   
             for (let otherSocketId of room.turnOrder) {
@@ -246,6 +275,12 @@ async function initSocket(io) {
                 }
             }
         });
+
+        socket.on("checkMated", (playerId) => {
+            if (!room.checkMatedArr.includes(playerId)){
+                room.checkMatedArr.push(playerId);
+            }
+        })
     });
 }
 
