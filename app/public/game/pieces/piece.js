@@ -23,6 +23,9 @@ function Piece(starting, player, pieceType) {
 		if(typeof boardState[currentPosition.row][currentPosition.col] === "object"){
 			unrender(currentPosition);
 		}
+		if (this.getType() === "rook" || this.getType() === "king") {
+			this.setMoved(true);
+		}
 		boardState[currentPosition.row][currentPosition.col] = serializePiece(this);
 		boardState[previousPosition.row][previousPosition.col] = 1;
 

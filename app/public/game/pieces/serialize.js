@@ -6,11 +6,20 @@ import Pawn from "./pawn.js";
 import King from "./king.js";
 
 export function serializePiece(piece) {
-    return {
-        position: piece.getPosition(),
-        player: piece.getPlayer(),
-        type: piece.getType()
-    };
+    if (piece.getType() === "king" || piece.getType() === "rook") {
+        return {
+            position: piece.getPosition(),
+            player: piece.getPlayer(),
+            type: piece.getType(),
+            moved: piece.getMoved()
+        }
+    } else {
+        return {
+            position: piece.getPosition(),
+            player: piece.getPlayer(),
+            type: piece.getType()
+        }
+    }
 }
 
 export function deserializePiece(data) {
@@ -22,11 +31,11 @@ export function deserializePiece(data) {
         case 'pawn':
             return Pawn(data.position, data.player);
         case 'rook':
-            return Rook(data.position, data.player);
+            return Rook(data.position, data.player, data.moved);
         case 'bishop':
             return Bishop(data.position, data.player);
         case 'king':
-            return King(data.position, data.player);
+            return King(data.position, data.player, data.moved);
         default:
             throw new Error('Unknown piece type: ' + data.type);
     }

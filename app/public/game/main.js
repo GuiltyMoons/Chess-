@@ -1,5 +1,5 @@
 import boardFunc from "./board/boardFunc.js";
-import { deserializePiece, serializeBoard } from "./pieces/serialize.js";
+import { deserializePiece, serializeBoard, serializePiece } from "./pieces/serialize.js";
 import { checkCheckMate } from "./movement/positionCheck.js";
 import { backRow } from "./movement/direction.js";
 
@@ -108,6 +108,7 @@ function setUpClicks() {
 
 function handleClicks(event) {
     const tile = event.target.closest(".tile");
+    let moves;
 
     if (!tile) {
         return;
@@ -126,6 +127,13 @@ function handleClicks(event) {
                 const previousPosition = pieceClicked.getPosition();
                 if (pieceClicked.getType() === "pawn" && backRow.some(pos => pos.row === positionDict.row && pos.col === positionDict.col)) {
                     pieceClicked.handlePromotion(initialBoard, positionDict);
+                } else if (pieceClicked.getType() === "king") {
+                    const safeMove = pieceClicked.getSafeMoves(initialBoard).some(pos => pos.row === row && pos.col === col);
+                    if (!pieceClicked.getMoved() && !safeMove) {
+                        pieceClicked.handleMovingCastle(initialBoard, positionDict);
+                    } else {
+                        pieceClicked.setPosition(positionDict, initialBoard);
+                    }
                 } else {
                     pieceClicked.setPosition(positionDict, initialBoard);
                 }
@@ -153,15 +161,25 @@ function handleClicks(event) {
         }
         if (piece !== pieceClicked) {
             unHighlight();
-            let moves = piece.getSafeMoves(initialBoard);
+            moves = piece.getSafeMoves(initialBoard);
+            if (piece.getType() === "king") {
+                moves = moves.concat(piece.getCastling(initialBoard, piece.getPosition(), piece.getPlayer(), piece.getMoved()));
+            }
             highlight(moves);
             pieceClicked = piece;
         }
     } else if (tile.classList.contains("highlight") && pieceClicked) {
         const previousPosition = pieceClicked.getPosition();
         const currentPosition = positionDict;
-        if (pieceClicked.getType() === "pawn" && backRow.some(pos => pos.row === currentPosition.row && pos.col === currentPosition.col)) {
+        if (pieceClicked.getType() === "pawn" && backRow.some(pos => pos.row === positionDict.row && pos.col === positionDict.col)) {
             pieceClicked.handlePromotion(initialBoard, currentPosition);
+        } else if (pieceClicked.getType() === "king") {
+            const safeMove = pieceClicked.getSafeMoves(initialBoard).some(pos => pos.row === row && pos.col === col);
+            if (!pieceClicked.getMoved() && !safeMove) {
+                pieceClicked.handleMovingCastle(initialBoard, currentPosition);
+            } else {
+                pieceClicked.setPosition(currentPosition, initialBoard);
+            }
         } else {
             pieceClicked.setPosition(currentPosition, initialBoard);
         }
@@ -201,17 +219,6 @@ socket.on("gameUpdate", ({ from, to, board }) => {
     initialBoard = structuredClone(board);
     updateUI(initialBoard);
     updateVisibilityForCurrentPlayer(); 
-    let piece = initialBoard[from.row][from.col];
-    if (typeof piece === "object") {
-        piece = deserializePiece(piece);
-        if (piece) {
-            if (piece.getType() === "pawn" && backRow.some(pos => pos.row === piece.getPosition().row && pos.col === piece.getPosition().col)) {
-                piece.handlePromotion(initialBoard, to);
-            } else {
-                piece.setPosition(to, initialBoard);
-            }
-        }
-    }
 });
 
 socket.on("playerTurn", ({ playerId, turnOrder }) => {

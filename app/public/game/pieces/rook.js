@@ -9,7 +9,8 @@ const imgSources = {
 	yellow: '/game/imgs/yellow/yRook.png'
 };
 
-function Rook(starting, player){
+function Rook(starting, player, moved){
+	let move = moved;
 	let piece = Piece(starting, player, "rook");
 	const imgSource = imgSources[player];
 	const dom = piece.dom;
@@ -24,7 +25,9 @@ function Rook(starting, player){
 
 	return {
 		...piece,
-		getPossibleMoves
+		getMoved: () => move,
+		getPossibleMoves,
+		setMoved: (moved) => move = moved 
 	}
 }
 

@@ -100,3 +100,61 @@ export function isPastMiddle(position, player) {
     }
     return false;
 }
+
+export function getCastlingMoves(boardState, kingPosition, player, moved) {
+    let castleMoves = []
+
+    if (moved) return castleMoves;
+
+    const objectsOnly = boardState.flat().filter(piece => typeof piece === "object");
+    const rooks = objectsOnly.filter(piece =>
+        piece.type === "rook" &&
+        piece.player === player &&
+        !piece.moved
+    );
+
+
+    for (let rook of rooks) {
+        let direction, adjacent, concerningTiles, valid;
+        if (player === "blue" || player === "red") {
+            direction = kingPosition.col - rook.position.col > 0 ? 1 : -1
+            adjacent = kingPosition.col - direction;
+            if (!deserializePiece(rook).getPossibleMoves(boardState).some(pos => pos.col === adjacent)) continue; 
+
+            concerningTiles = deserializePiece(rook).getPossibleMoves(boardState).filter(pos => pos.row === kingPosition.row);
+        } else {
+            direction = kingPosition.row - rook.position.row > 0 ? 1 : -1
+            adjacent = kingPosition.row - direction;
+
+            if (!deserializePiece(rook).getPossibleMoves(boardState).some(pos => pos.row === adjacent)) continue; 
+
+            concerningTiles = deserializePiece(rook).getPossibleMoves(boardState).filter(pos => pos.col === kingPosition.col);
+        }
+
+        valid = true;
+        const enemyPieces = objectsOnly.filter(piece => piece.player !== player);
+
+        for (const enemy of enemyPieces) {
+            let realEnemy = deserializePiece(enemy)
+            if (realEnemy.getPossibleMoves(boardState).length === 0) continue;
+            for (const move of realEnemy.getPossibleMoves(boardState)) {
+                if (concerningTiles.some(t => t.row === move.row && t.col === move.col)){
+                    valid = false;
+                }
+                if (!valid)
+                    break;
+            }
+            if (!valid)
+                break;
+        }
+
+        if (!valid) continue;
+        if (player === "blue" || player === "red") {
+            castleMoves.push({row : rook.position.row, col: rook.position.col + direction, closest: rook});
+        } else {
+            castleMoves.push({row : rook.position.row + direction, col: rook.position.col, closest: rook});
+        }
+    }
+
+    return castleMoves;
+}
