@@ -8,6 +8,7 @@ boardFunc.boardSetup(initialBoard);
 initialBoard = serializeBoard(initialBoard);
 const socket = io();
 
+let sentWinner = false;
 let checkMated = false;
 let playerColor;
 let currentPlayer;
@@ -260,7 +261,12 @@ socket.on("playerList", ( playerList ) => {
 
 socket.on("winner", ({ winner }) => {
     alert(`Player ${playersList[winner]} wins!`);
-    socket.emit("getWinner", ({ winner }));
+    if (userId === winner[0] ){
+        if (!sentWinner){
+            socket.emit("getWinner", ({ winner }));
+            sentWinner = true;
+        }
+    }
 });
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,21 +1,13 @@
 # Chess++
 
-Chess++ is a 4-player chess game with a unique twist: fog of war. The fog obscures the board, but your pieces will clear the fog in the spaces directly around them, revealing the positions of other pieces. The objective is to gain as many points as possible by capturing opponent pieces, checking enemy kings, and checkmating opponents. Checkmated opponents can no longer play the game.
+Chess++ is a 4-player chess game with a unique twist: fog of war. The fog obscures the board, but your pieces will clear the fog in the spaces directly around them, 
+revealing the positions of other pieces. The objective is to be the last player standing by checkmating other players and avoid being checkmated yourself. Checkmated opponents
+can no longer play the game.
 
 ## Features
 
 - **Fog of War**: Players can only see a limited area around their pieces.
 - **4 Players**: Battle against 3 opponents at the same time.
-- **Scoring System**: Points for checks, checkmates, and capturing pieces.
-
-## Scoring System
-
-- **5 points** per check
-- **20 points** per checkmate
-- **1 point** per pawn
-- **3 points** per knight
-- **5 points** per rook and bishop
-- **9 points** per queen
 
 ## Getting Started
 

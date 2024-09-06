@@ -66,7 +66,6 @@ router.post("/create", (req, res) => {
         checkMatedArr: [], 
         winner: null
     };
-
     return res.json({roomId});
 });
 
@@ -104,8 +103,6 @@ async function initSocket(io) {
         }
         next();
     });
-
-
 
     io.on("connection", (socket) => {
         let userId = socket.userId;
@@ -166,7 +163,7 @@ async function initSocket(io) {
                             let otherSocket = room.players[otherSocketId];
                             if (otherSocket && otherSocket.socket) {
                                 otherSocket.socket.emit("gameUpdate", { from, to, board });
-                                room.board = board;
+                                room.board = structuredClone(board);
                             }
                         }
                     }
@@ -242,7 +239,7 @@ async function initSocket(io) {
             return;
         }
 
-        socket.on("disconnect", async () => {
+        socket.on("disconnect", () => {
             delete room.players[userId].socket;
 
             for (let player of Object.values(room.players)) {
@@ -307,16 +304,14 @@ async function initSocket(io) {
             if (!room.checkMatedArr.includes(playerId)){
                 room.checkMatedArr.push(playerId);
             }
-        });
-        
-        //TODO: Wins get incremented twice for some reason.
+        })
+
         socket.once("getWinner", async ({ winner }) => {
             let user_id = room.winner;
             const updateWinsQuery = `UPDATE users SET wins = wins + 1 FROM sessions WHERE sessions.token = $1 AND sessions.user_id = users.id`;
     
             try {
                 await pool.query(updateWinsQuery, [user_id.toString()]);
-                console.log(`Player with ID ${user_id} has been awarded a win.`);
             } catch (error) {
                 console.error("Error updating wins for player:", error);
             }
