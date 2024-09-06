@@ -17,6 +17,17 @@ let pieceClicked;
 let playersList = {};
 let userId;
 
+const input = document.getElementById("input");
+const send = document.getElementById("send");
+const msgs = document.getElementById("messages");
+
+function addMessage(msg) {
+    const newMsg = document.createElement('div');
+    newMsg.textContent = msg;
+    msgs.appendChild(newMsg);
+    msgs.scrollTop = msgs.scrollHeight;
+}
+
 function highlight(moves) {
     moves.forEach(({ row, col }) => {
         const id = `${row}-${col}`;
@@ -157,8 +168,9 @@ socket.on("assignColor", ({ id, color }) => {
     playerColor = color;
 });
 
-socket.on("playerJoined", ({ id, color }) => {
+socket.on("playerJoined", ({ id, color, username }) => {
     playersList[id] = color;
+    addMessage(`${username} has joined.`);
     setUpClicks();
     updateVisibilityForCurrentPlayer();
 });
@@ -180,12 +192,14 @@ socket.on("gameUpdate", ({ from, to, board }) => {
 socket.on("playerTurn", ({ playerId, turnOrder }) => {
     playerTurn = turnOrder;
     currentPlayer = playerId;
+    addMessage(`It is ${playersList[currentPlayer]}'s turn.`);
     updateVisibilityForCurrentPlayer();
     check = checkChecked(initialBoard, playerColor);
 });
 
-socket.on("playerRejoined", ({ id, color, board }) => { 
+socket.on("playerRejoined", ({ id, color, board, username }) => { 
     playersList[id] = color;
+    addMessage(`${username} has rejoined.`)
     if (userId === id) {
         initialBoard = structuredClone(board);
         updateUI(initialBoard);
@@ -194,7 +208,8 @@ socket.on("playerRejoined", ({ id, color, board }) => {
     setUpClicks();
 });
 
-socket.on("playerLeft", ({ id }) => {
+socket.on("playerLeft", ({ id, username }) => {
+    addMessage(`${username} has left.`);
     delete playersList[id];
     setUpClicks();
 });
@@ -204,4 +219,27 @@ socket.on("playerList", ( playerList ) => {
         acc[id] = color;
         return acc;
     }, {});
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    socket.on("message", (msg) => {
+        addMessage(msg);
+    });
+
+    send.addEventListener("click", () => {
+        const msg = input.value.trim();
+        if (msg) {
+            socket.emit("message", msg);
+            input.value = "";
+        }
+    });
+
+    input.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+            send.click();
+        }
+    });
+
+
+
 });

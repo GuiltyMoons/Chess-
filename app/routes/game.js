@@ -63,17 +63,25 @@ function parseCookies(cookieHeader) {
     return cookies;
 }
 
-function initSocket(io) {
-    io.use((socket, next) => {
+async function initSocket(io) {
+    io.use(async (socket, next) => {
         const cookies = socket.handshake.headers.cookie;
         const parsedCookies = parseCookies(cookies);
         const userId = parsedCookies['token'];
         socket.userId = userId;
+        const query = `SELECT users.username FROM users JOIN sessions ON users.id = sessions.user_id 
+        WHERE sessions.token = $1 `;
+        const result = await pool.query(query, [userId]);
+        if (result.rows.length > 0) {
+            username = result.rows[0].username;
+            socket.username = username;
+        }
         next();
     });
 
     io.on("connection", (socket) => {
         let userId = socket.userId;
+        let username = socket.username;
         let url = socket.handshake.headers.referer;
         let pathParts = url.split("/");
         let roomId = pathParts[pathParts.length - 1];
@@ -96,7 +104,7 @@ function initSocket(io) {
             
             for (let playerSocket of Object.values(room.players)) {
                 if (playerSocket && playerSocket.socket) {
-                    playerSocket.socket.emit("playerRejoined", { id: userId, color: existingPlayer.color, board: room.board})
+                    playerSocket.socket.emit("playerRejoined", { id: userId, color: existingPlayer.color, board: room.board, username: username});
                 }
             }
             if (room.turnOrder.includes(userId)) {
@@ -108,7 +116,7 @@ function initSocket(io) {
     
                 for (let player of Object.values(room.players)) {
                     if (player && player.socket) {
-                        player.socket.emit("playerLeft", { id: userId });
+                        player.socket.emit("playerLeft", { id: userId, username: username });
                     }
                 }
     
@@ -138,10 +146,20 @@ function initSocket(io) {
                 for (let otherSocketId of room.turnOrder) {
                     let otherSocket = room.players[otherSocketId];
                     if (otherSocket && otherSocket.socket) {
-                        otherSocket.socket.emit("playerTurn", { playerId: nextPlayer, turnOrder: room.turnOrder });
+                        otherSocket.socket.emit("playerTurn", { playerId: nextPlayer, turnOrder: room.turnOrder, username: username });
                     }
                 }
             });
+
+            socket.on("message", (msg) => {
+                for (let otherSocketId of room.turnOrder) {
+                    let otherSocket = room.players[otherSocketId];
+                    if (otherSocket && otherSocket.socket) {
+                        otherSocket.socket.emit("message", msg);
+                    }
+                }
+            });
+
             return;
         }
 
@@ -160,7 +178,7 @@ function initSocket(io) {
 
             for (let playerSocket of Object.values(room.players)) {
                 if (playerSocket && playerSocket.socket) {
-                    playerSocket.socket.emit("playerJoined", { id: userId, color: playerColor})
+                    playerSocket.socket.emit("playerJoined", { id: userId, color: playerColor, username: username});
                 }
             }
 
@@ -184,7 +202,7 @@ function initSocket(io) {
 
             for (let player of Object.values(room.players)) {
                 if (player && player.socket) {
-                    player.socket.emit("playerLeft", { id: userId });
+                    player.socket.emit("playerLeft", { id: userId, username: username });
                 }
             }
 
@@ -216,6 +234,15 @@ function initSocket(io) {
                 let otherSocket = room.players[otherSocketId];
                 if (otherSocket && otherSocket.socket) {
                     otherSocket.socket.emit("playerTurn", { playerId: nextPlayer, turnOrder: room.turnOrder });
+                }
+            }
+        });
+
+        socket.on("message", (msg) => {
+            for (let otherSocketId of room.turnOrder) {
+                let otherSocket = room.players[otherSocketId];
+                if (otherSocket && otherSocket.socket) {
+                    otherSocket.socket.emit("message", msg);
                 }
             }
         });
