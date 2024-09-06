@@ -57,7 +57,7 @@ function unHighlight() {
     updateVisibilityForCurrentPlayer();
 }
 
-function updateVisibilityForCurrentPlayer() { //TODO: fix fog bug where captured piece is not fogged correctly for other players
+function updateVisibilityForCurrentPlayer() {
     for (let row = 0; row < initialBoard.length; row++) {
         for (let col = 0; col < initialBoard[row].length; col++) {
             const tile = document.getElementById(`${row}-${col}`);

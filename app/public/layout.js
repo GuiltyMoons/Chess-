@@ -81,5 +81,3 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
-
-//TODO: What happens if a user logs out of an in-progress game?

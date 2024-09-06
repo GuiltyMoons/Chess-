@@ -2,7 +2,6 @@
 // b/c npm run start doesn't cd into src/ to run this
 // and if we aren't in its cwd, all relative paths will break
 
-// TODO: implement rejoining game
 process.chdir(__dirname);
 
 const express = require("express");
