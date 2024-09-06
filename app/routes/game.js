@@ -7,7 +7,7 @@ const { Server } = require("socket.io");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-
+//TODO: update routes README
 app.use(cookieParser());
 
 if (process.env.NODE_ENV === "production") {
@@ -20,6 +20,7 @@ if (process.env.NODE_ENV === "production") {
 const pool = new Pool(databaseConfig);
 router.use(express.static("public"));
 let rooms = {};
+let room;
 
 function generateRoomCode() {
     let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -34,14 +35,38 @@ router.get("/dashboard", (req, res) => {
     return res.sendFile("public/game/dashboard.html", { root: process.cwd() });
 });
 
-router.post("/username", async (req, res) => {
-    return res.status(200).json({ username: req.user.username});
+router.post("/info", async (req, res) => {
+    try {
+        const query = `SELECT wins FROM users WHERE username = $1`;
+        const result = await pool.query(query, [req.user.username]);
+
+        if (result.rows.length > 0) {
+            const info = {
+                username: req.user.username, 
+                wins: result.rows[0].wins
+            }
+            return res.status(200).json(info);
+        } else {
+            return res.status(404).json({ error: "User not found." });
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        return res.sendStatus(500);
+    }
 });
 
 router.post("/create", (req, res) => {
     let roomId = generateRoomCode();
     
-    rooms[roomId] = {players:{}, turnOrder: [], turn: 0, board: {}, checkMatedArr: [], winner: null};
+    rooms[roomId] = {
+        players:{}, 
+        turnOrder: [], 
+        turn: 0, 
+        board: {}, 
+        checkMatedArr: [], 
+        winner: null
+    };
+
     return res.json({roomId});
 });
 
@@ -80,6 +105,8 @@ async function initSocket(io) {
         next();
     });
 
+
+
     io.on("connection", (socket) => {
         let userId = socket.userId;
         let username = socket.username;
@@ -91,7 +118,7 @@ async function initSocket(io) {
             return;
         }
 
-        let room = rooms[roomId];
+        room = rooms[roomId];
         if (room.players.hasOwnProperty(userId)) {
             let existingPlayer = room.players[userId];
             existingPlayer.socket = socket;
@@ -215,7 +242,7 @@ async function initSocket(io) {
             return;
         }
 
-        socket.on("disconnect", () => {
+        socket.on("disconnect", async () => {
             delete room.players[userId].socket;
 
             for (let player of Object.values(room.players)) {
@@ -280,7 +307,20 @@ async function initSocket(io) {
             if (!room.checkMatedArr.includes(playerId)){
                 room.checkMatedArr.push(playerId);
             }
-        })
+        });
+        
+        //TODO: Wins get incremented twice for some reason.
+        socket.once("getWinner", async ({ winner }) => {
+            let user_id = room.winner;
+            const updateWinsQuery = `UPDATE users SET wins = wins + 1 FROM sessions WHERE sessions.token = $1 AND sessions.user_id = users.id`;
+    
+            try {
+                await pool.query(updateWinsQuery, [user_id.toString()]);
+                console.log(`Player with ID ${user_id} has been awarded a win.`);
+            } catch (error) {
+                console.error("Error updating wins for player:", error);
+            }
+        });
     });
 }
 

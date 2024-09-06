@@ -83,6 +83,7 @@ function updateVisibilityForCurrentPlayer() {
         }
     }
 }
+
 function updateUI(board) {
     for (let row = 0; row < board.length; row++) {
         for (let col = 0; col < board[row].length; col++) {
@@ -97,7 +98,8 @@ function updateUI(board) {
             }
         }
     }
-};
+}
+
 function setUpClicks() {
     cell.removeEventListener("click", handleClicks);
     if (Object.keys(playersList).length === 4) {
@@ -258,6 +260,7 @@ socket.on("playerList", ( playerList ) => {
 
 socket.on("winner", ({ winner }) => {
     alert(`Player ${playersList[winner]} wins!`);
+    socket.emit("getWinner", ({ winner }));
 });
 
 document.addEventListener('DOMContentLoaded', () => {

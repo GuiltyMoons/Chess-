@@ -3,10 +3,11 @@ CREATE DATABASE chesspp;
 \c chesspp
 
 CREATE TABLE users (
-	id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL
+    password_hash VARCHAR(255) NOT NULL,
+    wins INTEGER DEFAULT 0
 );
 
 CREATE TABLE sessions (
