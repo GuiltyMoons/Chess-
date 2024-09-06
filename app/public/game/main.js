@@ -8,7 +8,7 @@ boardFunc.boardSetup(initialBoard);
 initialBoard = serializeBoard(initialBoard);
 const socket = io();
 
-let check = false;
+let checkMated = false;
 let playerColor;
 let currentPlayer;
 let playerTurn = [];
@@ -16,7 +16,6 @@ let highlightedDiv = []
 let pieceClicked;
 let playersList = {};
 let userId;
-
 const input = document.getElementById("input");
 const send = document.getElementById("send");
 const msgs = document.getElementById("messages");
@@ -194,7 +193,33 @@ socket.on("playerTurn", ({ playerId, turnOrder }) => {
     currentPlayer = playerId;
     addMessage(`It is ${playersList[currentPlayer]}'s turn.`);
     updateVisibilityForCurrentPlayer();
-    check = checkChecked(initialBoard, playerColor);
+
+    if (userId === currentPlayer) {
+        if (checkMated === true) {
+            if (checkMated) {
+                socket.emit("checkMated",
+                    userId
+                )
+                socket.emit("gameUpdate", {
+                    from: null,
+                    to: null,
+                    board: initialBoard
+                })
+            }
+        } else {
+            checkMated = checkCheckMate(initialBoard, playerColor);
+            if (checkMated) {
+                socket.emit("checkMated",
+                    userId
+                )
+                socket.emit("gameUpdate", {
+                    from: null,
+                    to: null,
+                    board: initialBoard
+                })
+            }
+        }
+    }
 });
 
 socket.on("playerRejoined", ({ id, color, board, username }) => { 
@@ -221,6 +246,11 @@ socket.on("playerList", ( playerList ) => {
     }, {});
 });
 
+socket.on("winner", ({ winner }) => {
+
+    alert(`Player ${playersList[winner]} wins!`);
+} )
+
 document.addEventListener('DOMContentLoaded', () => {
     socket.on("message", (msg) => {
         addMessage(msg);
@@ -239,7 +269,5 @@ document.addEventListener('DOMContentLoaded', () => {
             send.click();
         }
     });
-
-
 
 });
